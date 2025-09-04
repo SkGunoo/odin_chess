@@ -10,9 +10,11 @@ class ChessGame
 
   def play_game
     welcome_message
-    ask_player_to_make_a_move(@current_player)
-    # until @game_over
-    # end
+    until @game_over
+      # @board.update_board
+      # @board.display_board
+      ask_player_to_make_a_move(@current_player)
+    end
   end
 
   def welcome_message
@@ -26,13 +28,12 @@ class ChessGame
     chosen_piece = choose_a_piece(currnet_player)
     #add a method that displays available locations
     #that chosen piece can move
-    get_location_to_move_piece(chosen_piece)
+    location = get_location_to_move_piece(chosen_piece)
+    move_piece(chosen_piece,location)
   end
 
   def choose_a_piece(current_player)
     choose_the_type(get_available_types(current_player))
-    
-
   end
 
   def get_available_types(current_player)
@@ -76,6 +77,40 @@ class ChessGame
   end
 
   def get_location_to_move_piece(chosen_piece)
-    puts "which location you want to move "
+    puts "which location you want to move #{chosen_piece.symbol} to?"
+    @board.display_board
+    puts "type the location(example: a4, d4) then press enter" 
+    chosen_piece.convert_chess_location_to_array_location(get_location_from_user())
+  end
+
+  def get_location_from_user()
+    #also need to check if user input is one of the
+    #available moves
+    valid_location = false
+    answer = gets.chomp
+    valid_location = location_input_check(answer)
+    until valid_location
+      puts "type the location(example: a4, d4) then press enter" 
+      answer = gets.chomp
+      valid_location = location_input_check(answer)
+    end
+    answer
+  end
+
+  #checks if user input is correct
+  def location_input_check(location)
+    columns = ('a'..'h').to_a
+    rows = ('1'..'8').to_a
+    true if columns.include?(location[0]) && rows.include?(location[1]) && location.size == 2 
+  end
+  def move_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    @board.update_board
+    @board.display_board
+    switch_player
+  end
+
+  def switch_player
+    @current_player = @current_player == @board.player_one ? @board.player_two : @board.player_one
   end
 end

@@ -69,10 +69,13 @@ class Board
   end
 
   def update_board
+    clear_the_board
     update_chess_piece_locations(@player_one)
     update_chess_piece_locations(@player_two)
+  end
 
-    
+  def clear_the_board
+    @board = Array.new(8) { Array.new(8)}
   end
 
   def update_chess_piece_locations(player)

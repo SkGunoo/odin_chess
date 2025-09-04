@@ -38,5 +38,13 @@ class ChessPiece
     convert = {0 => 'a', 1 => 'b', 2 => 'c', 3 => 'd', 4 => 'e', 5 => 'f', 6 => 'g', 7 => 'h'}
     "#{convert[array_location[1]]}#{array_location[0] + 1}"
   end
+
+  #example: converts d4 into [3,3]
+  def convert_chess_location_to_array_location(chess_location)
+    convert = {"a"=>0, "b"=>1, "c"=>2, "d"=>3, "e"=>4, "f"=>5, "g"=>6, "h"=>7}
+    convert_row = {8 => 0, 7 => 1, 6 => 2, 5 => 3, 4 => 4, 3 =>5, 2=>6,1 =>7}
+    [convert_row[(chess_location[1].to_i)] ,convert[chess_location[0]]]
+
+  end
 end
 
