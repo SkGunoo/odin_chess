@@ -9,8 +9,8 @@ class Board
   attr_accessor :board, :player_one, :player_two
   def initialize 
     @board = Array.new(8) { Array.new(8)}
-    @player_one = Player.new("test",0)
-    @player_two = Player.new("test_one",1)
+    @player_one = Player.new("player_one ",0)
+    @player_two = Player.new("player_two",1)
 
   end
 

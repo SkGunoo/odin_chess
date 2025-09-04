@@ -1,7 +1,7 @@
 require_relative 'chess_piece.rb'
 class Player
 
-  attr_accessor :pieces
+  attr_accessor :pieces, :name
   def initialize(name, player_number)
     @name = name
     @player_number = player_number

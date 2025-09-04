@@ -11,8 +11,8 @@ class ChessGame
   def play_game
     welcome_message
     until @game_over
-      # @board.update_board
-      # @board.display_board
+      @board.update_board
+      @board.display_board
       ask_player_to_make_a_move(@current_player)
     end
   end
@@ -44,7 +44,7 @@ class ChessGame
 
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
-    puts "-Choose the number for type of the Chesspiece then press enter"
+    puts "-#{@current_player.name}Choose the number for type of the Chesspiece then press enter"
     puts "--#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
