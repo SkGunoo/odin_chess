@@ -6,9 +6,12 @@ require_relative 'player.rb'
 
 class Board 
 
-  attr_accessor :board, :player_one, :player_two
+  attr_accessor :board,:board_with_object ,:player_one, :player_two
   def initialize 
     @board = Array.new(8) { Array.new(8)}
+    #this is where chesspiece objects go 
+    @board_with_object = Array.new(8) { Array.new(8)}
+
     @player_one = Player.new("player_one ",0)
     @player_two = Player.new("player_two",1)
 
@@ -29,21 +32,22 @@ class Board
   def draw_row(row, index, hightlights)
 
     alternate_tile =[[1,3,5,7],[0,2,4,6]]
-    index.even? ? get_row(row,index,alternate_tile[0]): get_row(row,index,alternate_tile[1])
+    index.even? ? get_row(row,index,alternate_tile[0],hightlights): get_row(row,index,alternate_tile[1],hightlights)
     
   end
 
-  def get_row(row,index,colour_tile_index)
-    tile_sction = row.map.with_index do |tile, index| 
+  def get_row(row, index, colour_tile_index, hightlights)
+    tile_sction = row.map.with_index do |tile, current_tile_index| 
       edited_tile = tile.to_s.center(3)
-      if colour_tile_index.include?(index)
+      if highlight_check(index, current_tile_index, hightlights)
+        "#{background_colour(:yellow,edited_tile)}"
+      elsif colour_tile_index.include?(current_tile_index)
         "#{background_colour(:green,edited_tile)}"
       else
         "#{edited_tile}"
       end
     end
     "#{(8 - index)} |#{tile_sction.join("|")}| #{(8 - index)}\n"
-    
   end
 
 
@@ -69,22 +73,56 @@ class Board
   end
 
   def update_board
-    clear_the_board
-    update_chess_piece_locations(@player_one)
-    update_chess_piece_locations(@player_two)
+    # clear_the_board(@board)
+    update_board_with_object()
+    update_chess_piece_locations()
+    
+    @player_one.update_nearby_chesspieces_for_all_pieces(@board_with_object)
+    @player_two.update_nearby_chesspieces_for_all_pieces(@board_with_object)
   end
 
-  def clear_the_board
-    @board = Array.new(8) { Array.new(8)}
+  def clear_the_board(selected_board)
+    selected_board.each {|row| row.fill(nil)}
   end
 
-  def update_chess_piece_locations(player)
-    player.pieces.each do |piece|
+  #this updates @board_with_object
+  def update_board_with_object()
+    #fill the board with nil's first after update
+    clear_the_board(@board_with_object)
+    
+    @player_one.check_for_dead_pieces
+    @player_two.check_for_dead_pieces
+    all_the_pieces = @player_one.pieces + @player_two.pieces
+    all_the_pieces.each do |piece| 
+      location = piece.current_location
+      @board_with_object[location[0]][location[1]] = piece
+    end
+  end
+
+ 
+  #this updates sybols to @board
+  def update_chess_piece_locations()
+    clear_the_board(@board)
+
+    all_the_pieces = @player_one.pieces + @player_two.pieces
+    all_the_pieces.each do |piece|
       location = piece.current_location
       symbol = piece.symbol
       @board[location[0]][location[1]] = symbol
     end
   end
+
+  def highlight_check(row,column,highlights)
+    highlights.any? {|location| location == [row,column]}
+  end
+
+  def kill_opponent_piece(chosen_piece, location)
+    if opponent_piece = @board_with_object[location[0]][location[1]]
+      opponent_piece.dead = true
+    end
+    chosen_piece.current_location = location
+  end
+
 end
 
 

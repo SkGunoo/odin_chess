@@ -21,14 +21,10 @@ class ChessGame
   end
 
   def ask_player_to_make_a_move(currnet_player)
-    #first choose which piece playr want to move
-    #then show which locations that piece can go 
-    #make sure to give option to go back to choose
-    #differnt piece
+    
     chosen_piece = choose_a_piece(currnet_player)
-    #add a method that displays available locations
-    #that chosen piece can move
     location = get_location_to_move_piece(chosen_piece)
+    ### need to something 
     move_piece(chosen_piece,location)
   end
 
@@ -44,7 +40,7 @@ class ChessGame
 
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
-    puts "-#{@current_player.name}Choose the number for type of the Chesspiece then press enter"
+    puts "-#{@current_player.name} Choose the number for type of the Chesspiece then press enter"
     puts "--#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
@@ -78,33 +74,63 @@ class ChessGame
 
   def get_location_to_move_piece(chosen_piece)
     puts "which location you want to move #{chosen_piece.symbol} to?"
-    @board.display_board
-    puts "type the location(example: a4, d4) then press enter" 
-    chosen_piece.convert_chess_location_to_array_location(get_location_from_user())
+    available_locations = chosen_piece.get_movable_positions(@board)
+    #when user chose a piece but it has nowhere to go, go back to beginning
+    piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
+    available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
+    display_hlighlited_locations(available_locations)
+    chosen_piece.convert_chess_location_to_array_location(get_location_from_user(available_chess_locations))
   end
 
-  def get_location_from_user()
+  def display_hlighlited_locations(locations)
+    @board.display_board(locations)
+    puts "you can move the piece to highlited tiles"
+    puts "type the location(example: a4, d4) then press enter" 
+  end
+  
+  def piece_has_nowhere_to_go(chosen_piece)
+    puts "-#{chosen_piece.symbol}- you chose has nowhere to go"
+    puts "going back"
+    ask_player_to_make_a_move(@current_player)
+  end
+  #converts array of array locations(like [1,0]) to chess location(like a2)
+  def convert_array_locations_to_chess_locations(chosen_piece, array_locations)
+    converted = array_locations.map {|location|chosen_piece.convert_array_index_to_chess_location(location)}
+  end
+
+  def get_location_from_user(available_locations)
     #also need to check if user input is one of the
     #available moves
     valid_location = false
     answer = gets.chomp
-    valid_location = location_input_check(answer)
+    valid_location = location_input_check(answer,available_locations)
     until valid_location
       puts "type the location(example: a4, d4) then press enter" 
       answer = gets.chomp
-      valid_location = location_input_check(answer)
+      valid_location = location_input_check(answer,available_locations)
     end
     answer
   end
 
   #checks if user input is correct
-  def location_input_check(location)
+  def location_input_check(location,available_locations)
     columns = ('a'..'h').to_a
     rows = ('1'..'8').to_a
-    true if columns.include?(location[0]) && rows.include?(location[1]) && location.size == 2 
+    #available_locations[1..-1] because first element is current location
+    true if columns.include?(location[0]) && rows.include?(location[1]) && location.size == 2 && available_locations[1..-1].include?(location)
+
+    
   end
+
+  #move the given piece to specific location
   def move_piece(chosen_piece, location)
-    chosen_piece.current_location = location
+    chosen_piece.location_history << location
+    @board.kill_opponent_piece(chosen_piece,location)
+
+    # chosen_piece.current_location = location
+
+    #this updates number of moves
+    chosen_piece.number_of_moves += 1
     @board.update_board
     @board.display_board
     switch_player

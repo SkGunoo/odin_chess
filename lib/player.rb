@@ -1,13 +1,36 @@
 require_relative 'chess_piece.rb'
+
 class Player
 
-  attr_accessor :pieces, :name
+  attr_accessor :pieces, :name, :dead_pieces
   def initialize(name, player_number)
     @name = name
+    # @board = board
     @player_number = player_number
     @pieces = []
+    @dead_pieces =[]
+    # test_board_setup(player_number)
     setup_initial_pieces(player_number)
-    # p @pieces #delete this later
+  end
+
+
+  def test_board_setup(player_number)
+    # if player_number == 0 
+    #   @pieces << instance_variable_set("@pawn1", Pawn.new(@player_number, 'p', [4, 4]))
+    # else
+    #   @pieces << instance_variable_set("@pawn2", Pawn.new(@player_number, 'p', [3, 5]))
+    #   @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
+
+    # end
+    if player_number == 0 
+      @pieces << instance_variable_set("@pawn1", Knight.new(@player_number, 'n', [4, 4]))
+      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [4, 3]))
+      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [3, 3]))
+
+    else
+      @pieces << instance_variable_set("@pawn2", Bishop.new(@player_number, 'b', [3, 5]))
+      # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
+    end
   end
 
   def setup_initial_pieces(player_number)
@@ -19,7 +42,9 @@ class Player
     row = player_number == 0 ? 6 : 1
     8.times do |num|
       #
-      @pieces << instance_variable_set("@pawn#{num}", ChessPiece.new(@player_number, 'p', [row, num]))
+      @pieces << instance_variable_set("@pawn#{num}", Pawn.new(@player_number, 'p', [row, num]))
+
+      # @pieces << instance_variable_set("@pawn#{num}", ChessPiece.new(@player_number, 'p', [row, num]))
     end
   end
 
@@ -27,15 +52,28 @@ class Player
     row = player_number == 0 ? 7 : 0
     # set_up_layout = ['r','n','b','k','q','b','n','r']
     layout = {rock_one:'r',kinght_one:'n',bishop_one:'b',king:'k',queen:'q',bishop_two:'b',kight_two:'n',rock_two:'r'}
+    class_match = {'r'=> Rock, 'n' => Knight, 'b' => Bishop, 'k' => King, 'q' => Queen}
     layout.each_with_index do |(key,value),index| 
-      @pieces << instance_variable_set("@#{key.to_s}", ChessPiece.new(@player_number,value,[row,index]))
+      @pieces << instance_variable_set("@#{key.to_s}", class_match[value].new(@player_number,value,[row,index]))
     end
   end
-
+  ### knight need to match 'n'
   def get_positions_of_pieces(type)
     pieces = []
-    @pieces.each {|piece|pieces << piece if piece.piece_type == type}
+    @pieces.each do |piece|
+      pieces << piece if piece.piece_type == type
+    end
     pieces
   end
 
+  #updates @nearby_pieces of each piece
+  def update_nearby_chesspieces_for_all_pieces(board)
+    @pieces.each {|piece| piece.update_nearby_chesspieces(board)}
+  end
+
+  def check_for_dead_pieces
+    @pieces.each do |piece|
+      @dead_pieces << @pieces.delete(piece) if piece.dead
+    end
+  end
 end
