@@ -23,10 +23,12 @@ class ChessGame
   end
 
   def ask_player_to_make_a_move(currnet_player)
-    
+    # puts " hohohoho" if @winchekcer.checked?(currnet_player)
+    msg_if_player_is_checked(currnet_player)
     chosen_piece = choose_a_piece(currnet_player)
     location = get_location_to_move_piece(chosen_piece)
-    ### need to something 
+    #go back if this move doesnt get player out of check
+    ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
     move_piece(chosen_piece, location)
     update_after_a_move(chosen_piece, location)
   end
@@ -34,7 +36,7 @@ class ChessGame
   def choose_a_piece(current_player)
     choose_the_type(get_available_types(current_player))
   end
-  
+
   ### need to prevent presenting the pieces has nowhere to go
   def get_available_types(current_player)
     single_letter_to_full = {ki: 'king', qu: 'queen', kn: 'knight', bi: 'bishop', ro: 'rock', pa: 'pawn'}
@@ -85,14 +87,8 @@ class ChessGame
     #when user chose a piece but it has nowhere to go, go back to beginning
     piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
-    display_hlighlited_locations(available_locations)
+    @board.display_hlighlited_locations(available_locations)
     chosen_piece.convert_chess_location_to_array_location(get_location_from_user(available_chess_locations))
-  end
-
-  def display_hlighlited_locations(locations)
-    @board.display_board(locations)
-    puts "you can move the piece to highlited tiles"
-    puts "type the location(example: a4, d4) then press enter" 
   end
   
   def piece_has_nowhere_to_go(chosen_piece)
@@ -108,7 +104,6 @@ class ChessGame
   def get_location_from_user(available_locations)
     #also need to check if user input is one of the
     #available moves
-    valid_location = false
     answer = gets.chomp
     valid_location = location_input_check(answer,available_locations)
     until valid_location
@@ -125,24 +120,48 @@ class ChessGame
     rows = ('1'..'8').to_a
     #available_locations[1..-1] because first element is current location
     true if columns.include?(location[0]) && rows.include?(location[1]) && location.size == 2 && available_locations[1..-1].include?(location)
-
   end
 
   #move the given piece to specific location
   def move_piece(chosen_piece, location)
     chosen_piece.location_history << location
     @board.kill_opponent_piece(chosen_piece, location)
-    chosen_piece.current_location = location    
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
+
   end
 
   def update_after_a_move(chosen_piece, location)
-    chosen_piece.number_of_moves += 1
     @board.update_board
     @board.display_board
+    @winchekcer.update_check_status(@board.player_one)
+    @winchekcer.update_check_status(@board.player_two)
+
     switch_player
   end
 
   def switch_player
     @current_player = @current_player == @board.player_one ? @board.player_two : @board.player_one
+  end
+
+  def msg_if_player_is_checked(current_player)
+    if @current_player.check 
+      puts "CHECK!  Your King is under attack!!!!!"
+      puts " you must protect your king in this turn!"
+    end
+  end
+
+  def player_still_checked?(chosen_piece, location)
+    board_backup = Marshal.load(Marshal.dump(@board))
+    move_piece(chosen_piece, location)
+    checked = @winchekcer.checked?(@current_player)
+    puts "your king is still checked, try different move"
+    # @board = board_backup
+    if checked
+      @board.player_one.pieces = board_backup.player_one.pieces
+      @board.player_two.pieces = board_backup.player_two.pieces
+    end
+
+    checked ? true : false
   end
 end

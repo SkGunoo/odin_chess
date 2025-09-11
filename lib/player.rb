@@ -2,7 +2,7 @@ require_relative 'chess_piece.rb'
 
 class Player
 
-  attr_accessor :pieces, :name, :dead_pieces
+  attr_accessor :pieces, :name, :dead_pieces, :check, :checkmate
   def initialize(name, player_number)
     @name = name
     # @board = board
@@ -11,8 +11,8 @@ class Player
     @dead_pieces =[]
     @check = false
     @checkmate = false
-    # test_board_setup(player_number)
-    setup_initial_pieces(player_number)
+    test_board_setup(player_number)
+    # setup_initial_pieces(player_number)
   end
 
 
@@ -24,13 +24,23 @@ class Player
     #   @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
 
     # end
+    # if player_number == 0 
+    #   @pieces << instance_variable_set("@pawn1", Knight.new(@player_number, 'n', [4, 4]))
+    #   @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [4, 3]))
+    #   @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [3, 3]))
+
+    # else
+    #   @pieces << instance_variable_set("@pawn2", Bishop.new(@player_number, 'b', [3, 5]))
+    #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
+    # end
+
     if player_number == 0 
-      @pieces << instance_variable_set("@pawn1", Knight.new(@player_number, 'n', [4, 4]))
-      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [4, 3]))
-      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [3, 3]))
+      @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
+      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [4, 3]))
+      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [3, 3]))
 
     else
-      @pieces << instance_variable_set("@pawn2", Bishop.new(@player_number, 'b', [3, 5]))
+      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [0, 0]))
       # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
     end
   end

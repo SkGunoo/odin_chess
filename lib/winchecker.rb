@@ -26,15 +26,16 @@ class Winchecker
     end
   end
 
-  def own_king_to_be_checked
-    
+  def update_check_status(player)
+    player.check = true if checked?(player)
   end
+  
 
   def get_king_location(player)
     king = player.pieces.select do |piece|
       piece.piece_type == 'ki'
     end
-    king.current_location
+    king[0].current_location
   end
 
   def opponent_player(player)

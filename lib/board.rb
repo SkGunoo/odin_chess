@@ -1,5 +1,3 @@
-# rock : Ʀ
-# 🅡 Ⓖ
 require_relative 'chess_piece'
 require_relative 'player.rb'
  
@@ -30,7 +28,6 @@ class Board
   end
 
   def draw_row(row, index, hightlights)
-
     alternate_tile =[[1,3,5,7],[0,2,4,6]]
     index.even? ? get_row(row,index,alternate_tile[0],hightlights): get_row(row,index,alternate_tile[1],hightlights)
     
@@ -121,6 +118,16 @@ class Board
       opponent_piece.dead = true
     end
     # chosen_piece.current_location = location
+  end
+
+  def display_hlighlited_locations(locations)
+    display_board(locations)
+    puts "you can move the piece to highlited tiles"
+    puts "type the location(example: a4, d4) then press enter" 
+  end
+
+  def pieces_back_up 
+    
   end
 
 end
