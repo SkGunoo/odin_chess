@@ -1,11 +1,13 @@
 require_relative 'board.rb'
-require_relative 'chess_piece'
+require_relative 'chess_piece.rb'
+require_relative 'winchecker.rb'
 
 class ChessGame 
   def initialize
     @board = Board.new 
     @game_over = false
     @current_player = @board.player_one
+    @winchekcer = Winchecker.new(@board, @current_player)
   end
 
   def play_game
@@ -25,16 +27,19 @@ class ChessGame
     chosen_piece = choose_a_piece(currnet_player)
     location = get_location_to_move_piece(chosen_piece)
     ### need to something 
-    move_piece(chosen_piece,location)
+    move_piece(chosen_piece, location)
+    update_after_a_move(chosen_piece, location)
   end
 
   def choose_a_piece(current_player)
     choose_the_type(get_available_types(current_player))
   end
-
+  
+  ### need to prevent presenting the pieces has nowhere to go
   def get_available_types(current_player)
-    single_letter_to_full = {k: 'king', q: 'queen', n: 'knight', b: 'bishop', r: 'rock', p: 'pawn'}
-    pieces = current_player.pieces
+    single_letter_to_full = {ki: 'king', qu: 'queen', kn: 'knight', bi: 'bishop', ro: 'rock', pa: 'pawn'}
+    pieces = current_player.get_pieces_has_movable_places(@board)
+    # pieces = current_player.pieces
     pieces.map {|piece| "#{single_letter_to_full[piece.piece_type.to_sym]}"}.uniq()
   end
 
@@ -61,7 +66,9 @@ class ChessGame
   end
 
   def choose_actual_piece(piece_type_user_chose)
-    pieces = @current_player.get_positions_of_pieces(piece_type_user_chose[0])
+    pieces = @current_player.get_positions_of_pieces(piece_type_user_chose[0..1])
+    #this filters the pieces that has no play to go
+    pieces = pieces.select {|piece| piece.get_movable_positions(@board).size > 1}
     locations = pieces.map.with_index {|piece,index| "#{index + 1}:#{piece.convert_array_index_to_chess_location(piece.current_location)}  "}
     if locations.size > 1
       puts "-which #{piece_type_user_chose}, you want to choose to move?"
@@ -119,17 +126,16 @@ class ChessGame
     #available_locations[1..-1] because first element is current location
     true if columns.include?(location[0]) && rows.include?(location[1]) && location.size == 2 && available_locations[1..-1].include?(location)
 
-    
   end
 
   #move the given piece to specific location
   def move_piece(chosen_piece, location)
     chosen_piece.location_history << location
-    @board.kill_opponent_piece(chosen_piece,location)
+    @board.kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location    
+  end
 
-    # chosen_piece.current_location = location
-
-    #this updates number of moves
+  def update_after_a_move(chosen_piece, location)
     chosen_piece.number_of_moves += 1
     @board.update_board
     @board.display_board

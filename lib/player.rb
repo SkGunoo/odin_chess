@@ -9,6 +9,8 @@ class Player
     @player_number = player_number
     @pieces = []
     @dead_pieces =[]
+    @check = false
+    @checkmate = false
     # test_board_setup(player_number)
     setup_initial_pieces(player_number)
   end
@@ -42,7 +44,7 @@ class Player
     row = player_number == 0 ? 6 : 1
     8.times do |num|
       #
-      @pieces << instance_variable_set("@pawn#{num}", Pawn.new(@player_number, 'p', [row, num]))
+      @pieces << instance_variable_set("@pawn#{num}", Pawn.new(@player_number, 'pa', [row, num]))
 
       # @pieces << instance_variable_set("@pawn#{num}", ChessPiece.new(@player_number, 'p', [row, num]))
     end
@@ -51,8 +53,8 @@ class Player
   def setup_rest_of_pieces(player_number)
     row = player_number == 0 ? 7 : 0
     # set_up_layout = ['r','n','b','k','q','b','n','r']
-    layout = {rock_one:'r',kinght_one:'n',bishop_one:'b',king:'k',queen:'q',bishop_two:'b',kight_two:'n',rock_two:'r'}
-    class_match = {'r'=> Rock, 'n' => Knight, 'b' => Bishop, 'k' => King, 'q' => Queen}
+    layout = {rock_one:'ro',kinght_one:'kn',bishop_one:'bi',queen:'qu',king:'ki',bishop_two:'bi',kight_two:'kn',rock_two:'ro'}
+    class_match = {'ro'=> Rock, 'kn' => Knight, 'bi' => Bishop, 'ki' => King, 'qu' => Queen}
     layout.each_with_index do |(key,value),index| 
       @pieces << instance_variable_set("@#{key.to_s}", class_match[value].new(@player_number,value,[row,index]))
     end
@@ -75,5 +77,12 @@ class Player
     @pieces.each do |piece|
       @dead_pieces << @pieces.delete(piece) if piece.dead
     end
+  end
+
+  def get_pieces_has_movable_places(board)
+    pieces_can_move = @pieces.select do |piece|
+      piece.get_movable_positions(board).size > 1
+    end
+    pieces_can_move
   end
 end

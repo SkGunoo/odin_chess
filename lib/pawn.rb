@@ -2,7 +2,7 @@ require_relative 'chess_piece.rb'
 
 class Pawn < ChessPiece
   def initialize(player_number,piece_type,current_location)
-    super(player_number , 'p', current_location)
+    super(player_number , 'pa', current_location)
     @moved = false
   end
 

@@ -6,7 +6,7 @@ require_relative 'player.rb'
 
 class Board 
 
-  attr_accessor :board,:board_with_object ,:player_one, :player_two
+  attr_accessor :board, :board_with_object ,:player_one, :player_two
   def initialize 
     @board = Array.new(8) { Array.new(8)}
     #this is where chesspiece objects go 
@@ -120,7 +120,7 @@ class Board
     if opponent_piece = @board_with_object[location[0]][location[1]]
       opponent_piece.dead = true
     end
-    chosen_piece.current_location = location
+    # chosen_piece.current_location = location
   end
 
 end

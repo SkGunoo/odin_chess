@@ -28,18 +28,18 @@ class ChessPiece
   end
 
   def get_symbol(player_number,piece_type)
-    symbol_guide = [{k:SYMBOLS[0][0], 
-    q:SYMBOLS[0][1],
-    r:SYMBOLS[0][2],
-    b:SYMBOLS[0][3],
-    n:SYMBOLS[0][4],
-    p:SYMBOLS[0][5]},
-    {k:SYMBOLS[1][0], 
-    q:SYMBOLS[1][1],
-    r:SYMBOLS[1][2],
-    b:SYMBOLS[1][3],
-    n:SYMBOLS[1][4],
-    p:SYMBOLS[1][5]} 
+    symbol_guide = [{ki:SYMBOLS[0][0], 
+    qu:SYMBOLS[0][1],
+    ro:SYMBOLS[0][2],
+    bi:SYMBOLS[0][3],
+    kn:SYMBOLS[0][4],
+    pa:SYMBOLS[0][5]},
+    {ki:SYMBOLS[1][0], 
+    qu:SYMBOLS[1][1],
+    ro:SYMBOLS[1][2],
+    bi:SYMBOLS[1][3],
+    kn:SYMBOLS[1][4],
+    pa:SYMBOLS[1][5]} 
 
     ]
     symbol_guide[player_number][piece_type.to_sym]
