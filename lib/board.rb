@@ -126,6 +126,15 @@ class Board
     puts "type the location(example: a4, d4) then press enter" 
   end
 
+    #move the given piece to specific location
+
+  def move_piece(chosen_piece, location)
+    chosen_piece.location_history << location
+    kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
+  end
+
   
 
 end

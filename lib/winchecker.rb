@@ -28,6 +28,7 @@ class Winchecker
 
   def king_can_escape_check?(player)
     king = get_king(player)
+
   end
   
   def get_king(player)
@@ -59,5 +60,13 @@ class Winchecker
   def opponent()
     @current_player == @board.player_one ? @board.player_two : @board.player_one
   end
-  
+
+  def back_up_to_original(board_backup)
+      @board.player_one.pieces = board_backup.player_one.pieces
+      @board.player_two.pieces = board_backup.player_two.pieces
+      # @board = board_backup
+      @board.update_board
+      update_check_status(@board.player_one)
+      update_check_status(@board.player_two)
+  end
 end
