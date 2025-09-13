@@ -26,9 +26,21 @@ class Winchecker
     end
   end
 
+  def king_can_escape_check?(player)
+    
+  end
+  
+  def get_king(player)
+    king = player.pieces.select do |piece|
+      piece.piece_type == 'ki'
+    end
+    king
+  end
+
   def update_check_status(player)
     player.check = true if checked?(player)
   end
+
   
 
   def get_king_location(player)
@@ -37,6 +49,8 @@ class Winchecker
     end
     king[0].current_location
   end
+
+  
 
   def opponent_player(player)
     player == @board.player_one ? @board.player_two : @board.player_one

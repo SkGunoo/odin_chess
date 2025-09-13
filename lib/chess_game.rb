@@ -30,7 +30,7 @@ class ChessGame
     #go back if this move doesnt get player out of check
     ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
     move_piece(chosen_piece, location)
-    update_after_a_move(chosen_piece, location)
+    update_after_a_move()
   end
 
   def choose_a_piece(current_player)
@@ -131,7 +131,7 @@ class ChessGame
 
   end
 
-  def update_after_a_move(chosen_piece, location)
+  def update_after_a_move()
     @board.update_board
     @board.display_board
     @winchekcer.update_check_status(@board.player_one)
@@ -146,7 +146,8 @@ class ChessGame
 
   def msg_if_player_is_checked(current_player)
     if @current_player.check 
-      puts "CHECK!  Your King is under attack!!!!!"
+      puts ""
+      puts "\e[33m#{"CHECK!"}\e[0m \e[31m#{@current_player.name}\e[0m Your King is under attack!!!!!"
       puts " you must protect your king in this turn!"
     end
   end
@@ -160,8 +161,11 @@ class ChessGame
     if checked
       @board.player_one.pieces = board_backup.player_one.pieces
       @board.player_two.pieces = board_backup.player_two.pieces
+      @board.update_board
+      @winchekcer.update_check_status(@board.player_one)
+      @winchekcer.update_check_status(@board.player_two)
+      # puts "!!!!! #{chosen_piece.current_location}"
     end
-
     checked ? true : false
   end
 end
