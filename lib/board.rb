@@ -126,9 +126,7 @@ class Board
     puts "type the location(example: a4, d4) then press enter" 
   end
 
-  def pieces_back_up 
-    
-  end
+  
 
 end
 

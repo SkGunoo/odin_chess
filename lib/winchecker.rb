@@ -27,7 +27,7 @@ class Winchecker
   end
 
   def king_can_escape_check?(player)
-    
+    king = get_king(player)
   end
   
   def get_king(player)

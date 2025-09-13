@@ -156,11 +156,12 @@ class ChessGame
     board_backup = Marshal.load(Marshal.dump(@board))
     move_piece(chosen_piece, location)
     checked = @winchekcer.checked?(@current_player)
-    puts "your king is still checked, try different move"
-    # @board = board_backup
+    puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m"
+    # 
     if checked
-      @board.player_one.pieces = board_backup.player_one.pieces
-      @board.player_two.pieces = board_backup.player_two.pieces
+      # @board.player_one.pieces = board_backup.player_one.pieces
+      # @board.player_two.pieces = board_backup.player_two.pieces
+      @board = board_backup
       @board.update_board
       @winchekcer.update_check_status(@board.player_one)
       @winchekcer.update_check_status(@board.player_two)
