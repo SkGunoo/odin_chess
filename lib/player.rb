@@ -26,8 +26,8 @@ class Player
     # end
     # if player_number == 0 
     #   @pieces << instance_variable_set("@pawn1", Knight.new(@player_number, 'n', [4, 4]))
-    #   @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [4, 3]))
-    #   @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'b', [3, 3]))
+    #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'b', [4, 3]))
+    #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'b', [3, 3]))
 
     # else
     #   @pieces << instance_variable_set("@pawn2", Bishop.new(@player_number, 'b', [3, 5]))
@@ -36,8 +36,8 @@ class Player
 
     if player_number == 0 
       @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
-      @pieces << instance_variable_set("@pawn5", Bishop.new(@player_number, 'bi', [3, 2]))
-      # @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [0, 6]))
+      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [3, 2]))
+      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [0, 6]))
 
     else
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
@@ -63,8 +63,8 @@ class Player
   def setup_rest_of_pieces(player_number)
     row = player_number == 0 ? 7 : 0
     # set_up_layout = ['r','n','b','k','q','b','n','r']
-    layout = {rock_one:'ro',kinght_one:'kn',bishop_one:'bi',queen:'qu',king:'ki',bishop_two:'bi',kight_two:'kn',rock_two:'ro'}
-    class_match = {'ro'=> Rock, 'kn' => Knight, 'bi' => Bishop, 'ki' => King, 'qu' => Queen}
+    layout = {rook_one:'ro',kinght_one:'kn',bishop_one:'bi',queen:'qu',king:'ki',bishop_two:'bi',kight_two:'kn',rook_two:'ro'}
+    class_match = {'ro'=> Rook, 'kn' => Knight, 'bi' => Bishop, 'ki' => King, 'qu' => Queen}
     layout.each_with_index do |(key,value),index| 
       @pieces << instance_variable_set("@#{key.to_s}", class_match[value].new(@player_number,value,[row,index]))
     end

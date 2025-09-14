@@ -45,7 +45,7 @@ class ChessGame
 
   ### need to prevent presenting the pieces has nowhere to go
   def get_available_types(current_player)
-    single_letter_to_full = {ki: 'king', qu: 'queen', kn: 'knight', bi: 'bishop', ro: 'rock', pa: 'pawn'}
+    single_letter_to_full = {ki: 'King', qu: 'Queen', kn: 'Knight', bi: 'Bishop', ro: 'Rook', pa: 'Pawn'}
     pieces = current_player.get_pieces_has_movable_places(@board)
     # pieces = current_player.pieces
     pieces.map {|piece| "#{single_letter_to_full[piece.piece_type.to_sym]}"}.uniq()
@@ -57,7 +57,7 @@ class ChessGame
     puts " --#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
-    chosen_piece = choose_actual_piece(piece_type_user_chose)
+    chosen_piece = choose_actual_piece(piece_type_user_chose.downcase)
 
   end
 

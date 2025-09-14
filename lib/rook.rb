@@ -1,6 +1,6 @@
 require_relative 'chess_piece.rb'
 
-class Rock < ChessPiece
+class Rook < ChessPiece
   
   def get_movable_positions(board)
     object_board = board.board_with_object
