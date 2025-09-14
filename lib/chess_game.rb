@@ -18,6 +18,7 @@ class ChessGame
       @board.update_board
       @board.display_board
       ask_player_to_make_a_move(@current_player)
+      update_after_a_move()
       @game_over = @winchekcer.checkmate_check(@current_player)
 
     end
@@ -37,8 +38,6 @@ class ChessGame
     else
       @board.move_piece(chosen_piece, location) 
     end
-    
-    update_after_a_move()
     # ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
     
   end
@@ -136,7 +135,7 @@ class ChessGame
 
   def update_after_a_move()
     @board.update_board
-    @board.display_board
+    # @board.display_board
     @winchekcer.update_check_status(@board.player_one)
     @winchekcer.update_check_status(@board.player_two)
     p @board.player_one.check
