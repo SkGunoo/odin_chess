@@ -19,7 +19,6 @@ class Winchecker
     opponent = opponent_player(player)
     king_location = get_king_location(player)
     
-
     opponent.pieces.any? do |piece|
       locations = piece.get_movable_positions(@board)
       locations.include?(king_location)

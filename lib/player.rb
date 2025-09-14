@@ -2,7 +2,7 @@ require_relative 'chess_piece.rb'
 
 class Player
 
-  attr_accessor :pieces, :name, :dead_pieces, :check, :checkmate
+  attr_accessor :pieces, :name, :dead_pieces, :check, :checkmate, :player_number
   def initialize(name, player_number)
     @name = name
     # @board = board

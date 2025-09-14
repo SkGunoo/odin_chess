@@ -4,7 +4,7 @@ require_relative 'player.rb'
 
 class Board 
 
-  attr_accessor :board, :board_with_object ,:player_one, :player_two
+  attr_accessor :board, :board_with_object ,:player_one, :player_two, :players
   def initialize 
     @board = Array.new(8) { Array.new(8)}
     #this is where chesspiece objects go 
@@ -12,7 +12,7 @@ class Board
 
     @player_one = Player.new("player_one ",0)
     @player_two = Player.new("player_two",1)
-
+    @players = [@player_one, @player_two]
   end
 
   def display_board(highlights = [])
@@ -116,6 +116,8 @@ class Board
   def kill_opponent_piece(chosen_piece, location)
     if opponent_piece = @board_with_object[location[0]][location[1]]
       opponent_piece.dead = true
+      @player_one.check_for_dead_pieces
+      @player_two.check_for_dead_pieces
       
     end
     # chosen_piece.current_location = location
@@ -137,6 +139,13 @@ class Board
     
   end
 
+  def move_piece_for_testing(chosen_piece, location)
+    chosen_piece.location_history << location
+    kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
+    
+  end
   
 
 end

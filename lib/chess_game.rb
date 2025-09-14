@@ -1,6 +1,7 @@
 require_relative 'board.rb'
 require_relative 'chess_piece.rb'
 require_relative 'winchecker.rb'
+require_relative 'illegal_move.rb'
 
 class ChessGame 
   def initialize
@@ -8,6 +9,7 @@ class ChessGame
     @game_over = false
     @current_player = @board.player_one
     @winchekcer = Winchecker.new(@board, @current_player)
+    @illegal_move = IllegalMove.new(@board, @current_player)
   end
 
   def play_game
@@ -30,7 +32,11 @@ class ChessGame
     chosen_piece = choose_a_piece(currnet_player)
     location = get_location_to_move_piece(chosen_piece)
     #go back if this move doesnt get player out of check
-    @board.move_piece(chosen_piece, location)
+    if @illegal_move.illegal_move?(chosen_piece, location)
+      ask_player_to_make_a_move(currnet_player)
+    else
+      @board.move_piece(chosen_piece, location) 
+    end
     
     update_after_a_move()
     # ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
