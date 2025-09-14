@@ -10,11 +10,12 @@ class IllegalMove
 
   def illegal_move?(chosen_piece, location)
     if illegal_move_checker(chosen_piece, location)   
-      puts "that move is illegal! try different move!"
+      @board.display_board
+      puts "\n \e[33m That move puts your King in danger! try different move! \e[0m"
       true
     else
       false
-    end 
+    end
   end
 
   def illegal_move_checker(chosen_piece, location)
@@ -23,7 +24,8 @@ class IllegalMove
     board_copy.move_piece_for_testing(copied_chosen_piece, location)
     current_player = board_copy.players[chosen_piece.player_number]
     winchecker = Winchecker.new(board_copy, current_player)
-
+    # winchcker.checked requires updated board
+    board_copy.update_board
     winchecker.checked?(current_player)
 
   end

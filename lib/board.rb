@@ -4,14 +4,15 @@ require_relative 'player.rb'
 
 class Board 
 
-  attr_accessor :board, :board_with_object ,:player_one, :player_two, :players
+  attr_accessor :board, :board_with_object, :player_one, :player_two, :players
+
   def initialize 
     @board = Array.new(8) { Array.new(8)}
     #this is where chesspiece objects go 
     @board_with_object = Array.new(8) { Array.new(8)}
 
-    @player_one = Player.new("player_one ",0)
-    @player_two = Player.new("player_two",1)
+    @player_one = Player.new("Player One",0)
+    @player_two = Player.new("Player Two",1)
     @players = [@player_one, @player_two]
   end
 
@@ -123,9 +124,9 @@ class Board
     # chosen_piece.current_location = location
   end
 
-  def display_hlighlited_locations(locations)
+  def display_hlighlited_locations(locations,chosen_piece)
     display_board(locations)
-    puts "you can move the piece to highlited tiles"
+    puts "you can move the piece \e[33m#{chosen_piece.symbol}\e[0m to highlited tiles"
     puts "type the location(example: a4, d4) then press enter" 
   end
 

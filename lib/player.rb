@@ -36,12 +36,12 @@ class Player
 
     if player_number == 0 
       @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
-      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [1, 2]))
-      @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [0, 6]))
+      @pieces << instance_variable_set("@pawn5", Bishop.new(@player_number, 'bi', [3, 2]))
+      # @pieces << instance_variable_set("@pawn5", Rock.new(@player_number, 'ro', [0, 6]))
 
     else
-      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [0, 0]))
-      @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 2]))
+      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
+      # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
     end
   end
 

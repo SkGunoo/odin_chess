@@ -28,18 +28,15 @@ class ChessGame
   end
 
   def ask_player_to_make_a_move(currnet_player)
-    # puts " hohohoho" if @winchekcer.checked?(currnet_player)
     msg_if_player_is_checked(currnet_player)
     chosen_piece = choose_a_piece(currnet_player)
     location = get_location_to_move_piece(chosen_piece)
-    #go back if this move doesnt get player out of check
+
     if @illegal_move.illegal_move?(chosen_piece, location)
       ask_player_to_make_a_move(currnet_player)
     else
       @board.move_piece(chosen_piece, location) 
-    end
-    # ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
-    
+    end    
   end
 
   def choose_a_piece(current_player)
@@ -56,8 +53,8 @@ class ChessGame
 
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
-    puts "-#{@current_player.name} Choose the number for type of the Chesspiece then press enter"
-    puts "--#{array_to_string.join("")}"
+    puts "\n\e[33m-#{@current_player.name}\e[0m, choose which type of piece to move (enter the number):"
+    puts " --#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
     chosen_piece = choose_actual_piece(piece_type_user_chose)
@@ -91,12 +88,12 @@ class ChessGame
   end
 
   def get_location_to_move_piece(chosen_piece)
-    puts "which location you want to move #{chosen_piece.symbol} to?"
     available_locations = chosen_piece.get_movable_positions(@board)
     #when user chose a piece but it has nowhere to go, go back to beginning
     piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
-    @board.display_hlighlited_locations(available_locations)
+    @board.display_hlighlited_locations(available_locations, chosen_piece)
+    # puts "which location you want to move \e[33m#{chosen_piece.symbol}\e[0m to?"
     chosen_piece.convert_chess_location_to_array_location(get_location_from_user(available_chess_locations))
   end
   
@@ -105,6 +102,7 @@ class ChessGame
     puts "going back"
     ask_player_to_make_a_move(@current_player)
   end
+
   #converts array of array locations(like [1,0]) to chess location(like a2)
   def convert_array_locations_to_chess_locations(chosen_piece, array_locations)
     converted = array_locations.map {|location|chosen_piece.convert_array_index_to_chess_location(location)}
@@ -116,7 +114,7 @@ class ChessGame
     answer = gets.chomp
     valid_location = location_input_check(answer,available_locations)
     until valid_location
-      puts "type the location(example: a4, d4) then press enter" 
+      puts "type the location from highlighted tiles(example: a4, d4) then press enter" 
       answer = gets.chomp
       valid_location = location_input_check(answer,available_locations)
     end
@@ -135,11 +133,9 @@ class ChessGame
 
   def update_after_a_move()
     @board.update_board
-    # @board.display_board
+    @board.display_board
     @winchekcer.update_check_status(@board.player_one)
     @winchekcer.update_check_status(@board.player_two)
-    p @board.player_one.check
-    p @board.player_two.check
 
     switch_player
   end
@@ -150,9 +146,8 @@ class ChessGame
 
   def msg_if_player_is_checked(current_player)
     if @current_player.check 
-      puts ""
-      puts "\e[33m#{"CHECK!"}\e[0m \e[31m#{@current_player.name}\e[0m Your King is under attack!!!!!"
-      puts " you must protect your king in this turn!"
+      puts "\n\e[33m#{'CHECK!'}\e[0m \e[31m#{@current_player.name}\e[0m Your King is under attack!!!!!"
+      puts 'you must protect your king in this turn!'
     end
   end
 
@@ -165,4 +160,5 @@ class ChessGame
     @winchekcer.back_up_to_original(board_backup) if checked
     checked ? true : false
   end
+
 end
