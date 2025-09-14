@@ -26,20 +26,37 @@ class Winchecker
     end
   end
 
-  def king_can_escape_check?(player)
+  def king_cannot_escape_check?(player)
     king = get_king(player)
+    king_movable_locations = king.get_movable_positions(@board) 
+    # board_backup = Marshal.load(Marshal.dump(@board))
+    locations_opponent_can_reach = get_all_possible_locations_from_all_pieces(opponent_player(player))
+    king_movable_locations.all? do |location|
+      locations_opponent_can_reach.include?(location)
+    end
+  end
 
+  def get_all_possible_locations_from_all_pieces(player)
+    locations = []
+    player.pieces.each do |piece|
+      locations += piece.get_movable_positions(@board)
+    end
+    locations
   end
   
   def get_king(player)
     king = player.pieces.select do |piece|
       piece.piece_type == 'ki'
     end
-    king
+    king[0]
   end
 
   def update_check_status(player)
-    player.check = true if checked?(player)
+    if checked?(player)
+      player.check = true
+    else
+      player.check = false
+    end 
   end
 
   
@@ -68,5 +85,15 @@ class Winchecker
       @board.update_board
       update_check_status(@board.player_one)
       update_check_status(@board.player_two)
+  end
+
+  def checkmate_check(player)
+    if king_cannot_escape_check?(player)
+      opponent = opponent_player(player)
+      puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
+      true
+    else
+      false
+    end
   end
 end

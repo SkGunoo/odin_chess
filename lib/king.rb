@@ -5,7 +5,7 @@ class King < ChessPiece
   def get_movable_positions(board)
     object_board = board.board_with_object
     movable_positions = [@current_location]
-    offsets = [[-1, 0], [0, -1],[0, 1],[1, 0]]
+    offsets = [[-1, 0], [0, -1],[0, 1],[1, 0],[-1, -1], [-1, 1],[1, -1],[1, 1]]
     offsets.each do |direction|
       location = get_available_location_to_given_direction( direction,object_board)
       movable_positions << location unless location.nil?

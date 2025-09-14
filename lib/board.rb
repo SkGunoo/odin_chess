@@ -116,6 +116,7 @@ class Board
   def kill_opponent_piece(chosen_piece, location)
     if opponent_piece = @board_with_object[location[0]][location[1]]
       opponent_piece.dead = true
+      
     end
     # chosen_piece.current_location = location
   end
@@ -133,6 +134,7 @@ class Board
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
     chosen_piece.number_of_moves += 1
+    
   end
 
   

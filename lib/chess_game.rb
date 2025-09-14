@@ -16,6 +16,8 @@ class ChessGame
       @board.update_board
       @board.display_board
       ask_player_to_make_a_move(@current_player)
+      @game_over = @winchekcer.checkmate_check(@current_player)
+
     end
   end
 
@@ -28,9 +30,11 @@ class ChessGame
     chosen_piece = choose_a_piece(currnet_player)
     location = get_location_to_move_piece(chosen_piece)
     #go back if this move doesnt get player out of check
-    ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
     @board.move_piece(chosen_piece, location)
+    
     update_after_a_move()
+    # ask_player_to_make_a_move(currnet_player) if player_still_checked?(chosen_piece, location)
+    
   end
 
   def choose_a_piece(current_player)
@@ -129,6 +133,8 @@ class ChessGame
     @board.display_board
     @winchekcer.update_check_status(@board.player_one)
     @winchekcer.update_check_status(@board.player_two)
+    p @board.player_one.check
+    p @board.player_two.check
 
     switch_player
   end
@@ -149,12 +155,9 @@ class ChessGame
     board_backup = Marshal.load(Marshal.dump(@board))
     @board.move_piece(chosen_piece, location)
     checked = @winchekcer.checked?(@current_player)
-    puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m"
+    puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m" if checked
     
-    if checked
-      @winchekcer.back_up_to_original(board_backup)
-      # puts "!!!!! #{chosen_piece.current_location}"
-    end
+    @winchekcer.back_up_to_original(board_backup) if checked
     checked ? true : false
   end
 end
