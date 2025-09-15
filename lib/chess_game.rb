@@ -22,14 +22,13 @@ class ChessGame
       ask_player_to_make_a_move(@current_player)
       update_after_a_move()
       @game_over = @winchecker.checkmate_check(@current_player)
-      save_game
     end
   end
 
   def load_game? 
     done = false
     until done
-      puts "Saved game found! \n do you want to load it? press \e[33m'1'\e[0m to load, press \e[33m'2'\e[0m to start a new game"
+      puts "Saved game found! \n Do you want to load it? press \e[33m'1'\e[0m to load, press \e[33m'2'\e[0m to start a new game"
       answer = gets.chomp.to_s
       done = true if answer == '1'
       return false if answer == '2'
@@ -49,6 +48,7 @@ class ChessGame
     # YAML.dump converts our object directly to YAML format
     File.write(filename, YAML.dump(data))
     puts "Game saved to #{filename}!"
+    exit
   end
 
   def load_game(filename = "chess_game.yml")
@@ -103,6 +103,7 @@ class ChessGame
 
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
+    puts "\nYou can press \e[33m's'\e[0m to save the game and exit"
     puts "\n\e[33m-#{@current_player.name}\e[0m, choose which type of piece to move (enter the number):"
     puts " --#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
@@ -113,14 +114,17 @@ class ChessGame
 
   def get_vailid_answer(available_types)
     valid_answers = (1..available_types.size).to_a
-    # answer = nil
-    answer = gets.chomp.to_i
-    until valid_answers.include?(answer)
+    answer = gets.chomp
+    save_game if answer == 's'
+    answer_converted = answer.to_i
+    until valid_answers.include?(answer_converted)
       puts "wrong input type between 1 - #{valid_answers[-1]}"
-      answer = gets.chomp.to_i
+      answer = gets.chomp
+      save_game if answer == 's'
+      answer_converted = answer.to_i
     end
     # -1 because indext starts at 0
-    answer - 1
+    answer_converted - 1
   end
 
   def choose_actual_piece(piece_type_user_chose)
@@ -167,7 +171,7 @@ class ChessGame
     return nil if answer == 'g'
     valid_location = location_input_check(answer,available_locations)
     until valid_location
-      puts "if you go back and choose another piece to move type 'g'"
+      puts "Type\e[33m'g'\e[0m if you want to go back and choose another piece to move  \n"
       puts "type the location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
       return nil if answer == 'g'
