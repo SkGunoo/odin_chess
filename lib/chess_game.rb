@@ -2,26 +2,72 @@ require_relative 'board.rb'
 require_relative 'chess_piece.rb'
 require_relative 'winchecker.rb'
 require_relative 'illegal_move.rb'
+require 'yaml'
 
 class ChessGame 
   def initialize
     @board = Board.new 
     @game_over = false
     @current_player = @board.player_one
-    @winchekcer = Winchecker.new(@board, @current_player)
+    @winchecker = Winchecker.new(@board, @current_player)
     @illegal_move = IllegalMove.new(@board, @current_player)
   end
 
   def play_game
     welcome_message
+    load_game? if File.exist?('chess_game.yml')
     until @game_over
       @board.update_board
       @board.display_board
       ask_player_to_make_a_move(@current_player)
       update_after_a_move()
-      @game_over = @winchekcer.checkmate_check(@current_player)
-
+      @game_over = @winchecker.checkmate_check(@current_player)
+      save_game
     end
+  end
+
+  def load_game? 
+    done = false
+    until done
+      puts "Saved game found! \n do you want to load it? press: 1 to load, press: 2 to start a new game"
+      answer = gets.chomp.to_s
+      done = true if answer == '1'
+      return false if answer == '2'
+    end
+    load_game if done
+    
+  end
+
+  def save_game(filename = "chess_game.yml")
+    data = {
+      'board' => @board,
+      'game_over' => @game_over,
+      'current_player' => @current_player,
+      'winchecker' => @winchecker,
+      'illegal_move' => @illegal_move
+    }
+    # YAML.dump converts our object directly to YAML format
+    File.write(filename, YAML.dump(data))
+    puts "Game saved to #{filename}!"
+  end
+
+  def load_game(filename = "chess_game.yml")
+    return nil unless File.exist?(filename)
+    
+    data = YAML.load_file(filename, permitted_classes: [
+      Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker
+    ],aliases: true)
+
+    @board = data['board']
+    @game_over = data['game_over']
+    @current_player = data['current_player']
+    @winchecker = data['winchecker']
+    @illegal_move = data['illegal_move']
+
+  rescue => error
+    puts "Error loading game: #{error.message}"
+    puts "Error type: #{error.class}"  # This helps us see what went wrong
+    return nil
   end
 
   def welcome_message
@@ -114,8 +160,9 @@ class ChessGame
     answer = gets.chomp
     valid_location = location_input_check(answer,available_locations)
     until valid_location
-      puts "type the location from highlighted tiles(example: a4, d4) then press enter" 
+      puts "type the location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
+      # return ask_player_to_make_a_move(@current_player) if answer == 'b'
       valid_location = location_input_check(answer,available_locations)
     end
     answer
@@ -134,8 +181,8 @@ class ChessGame
   def update_after_a_move()
     @board.update_board
     @board.display_board
-    @winchekcer.update_check_status(@board.player_one)
-    @winchekcer.update_check_status(@board.player_two)
+    @winchecker.update_check_status(@board.player_one)
+    @winchecker.update_check_status(@board.player_two)
 
     switch_player
   end
@@ -154,10 +201,10 @@ class ChessGame
   def player_still_checked?(chosen_piece, location)
     board_backup = Marshal.load(Marshal.dump(@board))
     @board.move_piece(chosen_piece, location)
-    checked = @winchekcer.checked?(@current_player)
+    checked = @winchecker.checked?(@current_player)
     puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m" if checked
     
-    @winchekcer.back_up_to_original(board_backup) if checked
+    @winchecker.back_up_to_original(board_backup) if checked
     checked ? true : false
   end
 
