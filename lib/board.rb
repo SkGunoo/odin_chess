@@ -20,7 +20,7 @@ class Board
     chess_board = []
     
     @board.each_with_index {|row, index| chess_board << draw_row(row,index,highlights)}
-    seperator = "  🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n"
+    seperator = "     🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n"
     
     print_column_numbers("top")
     puts chess_board.join(seperator)
@@ -45,14 +45,14 @@ class Board
         "#{edited_tile}"
       end
     end
-    "#{(8 - index)} |#{tile_sction.join("|")}| #{(8 - index)}\n"
+    "   #{(8 - index)} |#{tile_sction.join("|")}| #{(8 - index)}\n"
   end
 
 
   def print_column_numbers(side)
     #3 elements 
-    elements = ["  🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n",
-    "    a   b   c   d   e   f   g   h  ",
+    elements = ["     🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n",
+    "       a   b   c   d   e   f   g   h  ",
     " "]
     puts_order = side == "top" ? (0..2).to_a.reverse : (0..2).to_a 
     puts_order.each {|index| puts elements[index]}
@@ -127,6 +127,7 @@ class Board
   def display_hlighlited_locations(locations,chosen_piece)
     display_board(locations)
     puts "you can move the piece \e[33m#{chosen_piece.symbol}\e[0m to highlighted tiles"
+    puts "If you go back and choose another piece to move type \e[33m 'g' \e[10m"
     puts "type the location(example: a4, d4) then press enter" 
   end
 

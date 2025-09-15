@@ -29,7 +29,7 @@ class ChessGame
   def load_game? 
     done = false
     until done
-      puts "Saved game found! \n do you want to load it? press: 1 to load, press: 2 to start a new game"
+      puts "Saved game found! \n do you want to load it? press \e[33m'1'\e[0m to load, press \e[33m'2'\e[0m to start a new game"
       answer = gets.chomp.to_s
       done = true if answer == '1'
       return false if answer == '2'
@@ -74,15 +74,19 @@ class ChessGame
   end
 
   def ask_player_to_make_a_move(currnet_player)
-    msg_if_player_is_checked(currnet_player)
-    chosen_piece = choose_a_piece(currnet_player)
-    location = get_location_to_move_piece(chosen_piece)
+    chosen_piece = nil
+    location = nil 
+    until chosen_piece && location
+      msg_if_player_is_checked(currnet_player)
+      chosen_piece = choose_a_piece(currnet_player)
+      location = get_location_to_move_piece(chosen_piece) 
+    end
 
     if @illegal_move.illegal_move?(chosen_piece, location)
       ask_player_to_make_a_move(currnet_player)
     else
       @board.move_piece(chosen_piece, location) 
-    end    
+    end
   end
 
   def choose_a_piece(current_player)
@@ -136,11 +140,13 @@ class ChessGame
   def get_location_to_move_piece(chosen_piece)
     available_locations = chosen_piece.get_movable_positions(@board)
     #when user chose a piece but it has nowhere to go, go back to beginning
-    piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
+    # piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
     @board.display_hlighlited_locations(available_locations, chosen_piece)
     # puts "which location you want to move \e[33m#{chosen_piece.symbol}\e[0m to?"
-    chosen_piece.convert_chess_location_to_array_location(get_location_from_user(available_chess_locations))
+    user_input = get_location_from_user(available_chess_locations)
+    return nil if user_input.nil?
+    chosen_piece.convert_chess_location_to_array_location(user_input)
   end
   
   def piece_has_nowhere_to_go(chosen_piece)
@@ -158,11 +164,13 @@ class ChessGame
     #also need to check if user input is one of the
     #available moves
     answer = gets.chomp
+    return nil if answer == 'g'
     valid_location = location_input_check(answer,available_locations)
     until valid_location
+      puts "if you go back and choose another piece to move type 'g'"
       puts "type the location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
-      # return ask_player_to_make_a_move(@current_player) if answer == 'b'
+      return nil if answer == 'g'
       valid_location = location_input_check(answer,available_locations)
     end
     answer

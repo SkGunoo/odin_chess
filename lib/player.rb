@@ -11,9 +11,9 @@ class Player
     @dead_pieces =[]
     @check = false
     @checkmate = false
-    test_board_setup(player_number)
+    # test_board_setup(player_number)
     @flag = false
-    # setup_initial_pieces(player_number)
+    setup_initial_pieces(player_number)
   end
 
 
