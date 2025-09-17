@@ -1,7 +1,12 @@
 require_relative 'chess_piece.rb'
 
 class King < ChessPiece
-
+  
+  def initialize(player_number,piece_type, current_location)
+    super(player_number , 'ki', current_location)
+    @moved = false
+  end
+  
   def get_movable_positions(board)
     object_board = board.board_with_object
     movable_positions = [@current_location]
@@ -24,4 +29,6 @@ class King < ChessPiece
     next_column = location[1] + direction[1]
     [next_row, next_column]
   end
+
+
 end

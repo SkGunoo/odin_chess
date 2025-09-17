@@ -2,6 +2,7 @@ require_relative 'board.rb'
 require_relative 'chess_piece.rb'
 require_relative 'winchecker.rb'
 require_relative 'illegal_move.rb'
+require_relative 'castling.rb'
 require 'yaml'
 
 class ChessGame 
@@ -11,6 +12,7 @@ class ChessGame
     @current_player = @board.player_one
     @winchecker = Winchecker.new(@board, @current_player)
     @illegal_move = IllegalMove.new(@board, @current_player)
+    @castling = Castling.new(@board, @winchecker, @current_player)
   end
 
   def play_game
@@ -85,6 +87,7 @@ class ChessGame
     if @illegal_move.illegal_move?(chosen_piece, location)
       ask_player_to_make_a_move(currnet_player)
     else
+      @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki'
       @board.move_piece(chosen_piece, location) 
     end
   end
@@ -143,6 +146,7 @@ class ChessGame
 
   def get_location_to_move_piece(chosen_piece)
     available_locations = chosen_piece.get_movable_positions(@board)
+    available_locations += @castling.castling_positions(chosen_piece) if chosen_piece.piece_type == 'ki'
     #when user chose a piece but it has nowhere to go, go back to beginning
     # piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
@@ -153,11 +157,11 @@ class ChessGame
     chosen_piece.convert_chess_location_to_array_location(user_input)
   end
   
-  def piece_has_nowhere_to_go(chosen_piece)
-    puts "-#{chosen_piece.symbol}- you chose has nowhere to go"
-    puts "going back"
-    ask_player_to_make_a_move(@current_player)
-  end
+  # def piece_has_nowhere_to_go(chosen_piece)
+  #   puts "-#{chosen_piece.symbol}- you chose has nowhere to go"
+  #   puts "going back"
+  #   ask_player_to_make_a_move(@current_player)
+  # end
 
   #converts array of array locations(like [1,0]) to chess location(like a2)
   def convert_array_locations_to_chess_locations(chosen_piece, array_locations)
@@ -210,14 +214,14 @@ class ChessGame
     end
   end
 
-  def player_still_checked?(chosen_piece, location)
-    board_backup = Marshal.load(Marshal.dump(@board))
-    @board.move_piece(chosen_piece, location)
-    checked = @winchecker.checked?(@current_player)
-    puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m" if checked
+  # def player_still_checked?(chosen_piece, location)
+  #   board_backup = Marshal.load(Marshal.dump(@board))
+  #   @board.move_piece(chosen_piece, location)
+  #   checked = @winchecker.checked?(@current_player)
+  #   puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m" if checked
     
-    @winchecker.back_up_to_original(board_backup) if checked
-    checked ? true : false
-  end
+  #   @winchecker.back_up_to_original(board_backup) if checked
+  #   checked ? true : false
+  # end
 
 end

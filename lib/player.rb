@@ -35,13 +35,46 @@ class Player
     #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
     # end
 
-    if player_number == 0 
-      @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
-      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [3, 2]))
-      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [0, 6]))
+    # if player_number == 0 
+    #   @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
+    #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [3, 2]))
+    #   @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [0, 6]))
 
+    # else
+    #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
+    #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
+      
+    # end
+
+    ########castling set up
+    # if player_number == 0 
+    #   @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [7, 4]))
+    #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 7]))
+    #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 0]))
+      
+    #   # @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
+
+    # else
+    #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
+      
+    #   # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
+
+    #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
+    # end
+
+    ###########castling set_up #2
+    if player_number == 0 
+      
+      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
+
+      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [4, 1]))
     else
-      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
+      @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [0, 4]))
+      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 7]))
+      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 0]))
+      
+      # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
+
       # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
     end
   end
