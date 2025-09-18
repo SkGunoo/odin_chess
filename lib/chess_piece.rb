@@ -8,7 +8,7 @@
 
 class ChessPiece
 
-  attr_accessor :current_location, :symbol, :piece_type, :number_of_moves, :location_history, :player_number, :dead
+  attr_accessor :current_location, :symbol, :piece_type, :number_of_moves, :location_history, :player_number, :dead, :moved, :nearby_pieces
   SYMBOLS = [["𝐊", "𝐐", "𝐑", "𝐁", "𝐍", "𝐏"],["🅚", "🅠", "🅡", "🅑", "🅝", "🅟"]]
   # SYMBOLS = [["𝐊", "𝐐", "𝐑", "𝐁", "𝐍", "𝐏"],["𝑲", "𝑸", "𝑹", "𝑩", "𝑵", "𝑷"]]
 
@@ -24,6 +24,8 @@ class ChessPiece
     # 1 c 2  #c is chess piece    
     # 6 3 7
     @nearby_pieces = []
+    @moved = false
+
     
   end
 

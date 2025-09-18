@@ -3,6 +3,7 @@ require_relative 'chess_piece.rb'
 require_relative 'winchecker.rb'
 require_relative 'illegal_move.rb'
 require_relative 'castling.rb'
+require_relative 'en_passant.rb'
 require 'yaml'
 
 class ChessGame 
@@ -13,6 +14,8 @@ class ChessGame
     @winchecker = Winchecker.new(@board, @current_player)
     @illegal_move = IllegalMove.new(@board, @current_player)
     @castling = Castling.new(@board, @winchecker, @current_player)
+    @en_passant = EnPassant.new(@board)
+    @turn_number = 0
   end
 
   def play_game
@@ -145,8 +148,7 @@ class ChessGame
   end
 
   def get_location_to_move_piece(chosen_piece)
-    available_locations = chosen_piece.get_movable_positions(@board)
-    available_locations += @castling.castling_positions(chosen_piece) if chosen_piece.piece_type == 'ki'
+    available_locations = get_available_locations(chosen_piece)
     #when user chose a piece but it has nowhere to go, go back to beginning
     # piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
@@ -157,11 +159,12 @@ class ChessGame
     chosen_piece.convert_chess_location_to_array_location(user_input)
   end
   
-  # def piece_has_nowhere_to_go(chosen_piece)
-  #   puts "-#{chosen_piece.symbol}- you chose has nowhere to go"
-  #   puts "going back"
-  #   ask_player_to_make_a_move(@current_player)
-  # end
+  def get_available_locations (chosen_piece)
+    available_locations = chosen_piece.get_movable_positions(@board)
+    available_locations += @castling.castling_positions(chosen_piece) if chosen_piece.piece_type == 'ki'
+    available_locations += @en_passant.en_passant_positions(chosen_piece) if chosen_piece.piece_type == 'pa'
+    available_locations
+  end
 
   #converts array of array locations(like [1,0]) to chess location(like a2)
   def convert_array_locations_to_chess_locations(chosen_piece, array_locations)
@@ -195,8 +198,11 @@ class ChessGame
   
 
   def update_after_a_move()
+    @turn_number += 1
+    @en_passant.update_can_get_en_passant(@turn_number)
+    @en_passant.update_can_en_passant
     @board.update_board
-    @board.display_board
+    # @board.display_board
     @winchecker.update_check_status(@board.player_one)
     @winchecker.update_check_status(@board.player_two)
 

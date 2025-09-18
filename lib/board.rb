@@ -138,16 +138,17 @@ class Board
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
     chosen_piece.number_of_moves += 1
+    chosen_piece.moved = true
     
   end
 
-  # def move_piece_for_testing(chosen_piece, location)
-  #   chosen_piece.location_history << location
-  #   kill_opponent_piece(chosen_piece, location)
-  #   chosen_piece.current_location = location
-  #   chosen_piece.number_of_moves += 1
+  def move_piece_for_testing(chosen_piece, location)
+    chosen_piece.location_history << location
+    kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
     
-  # end
+  end
   
 
 end

@@ -1,9 +1,14 @@
 require_relative 'chess_piece.rb'
 
 class Pawn < ChessPiece
+
+  attr_accessor :can_en_passant, :can_get_en_passant, :just_en_passanted, :first_moved_turn
   def initialize(player_number,piece_type, current_location)
     super(player_number , 'pa', current_location)
-    @moved = false
+    @can_en_passant = false
+    @can_get_en_passant = false
+    @just_en_passanted = false
+    @first_moved_turn = nil 
   end
 
   def get_movable_positions(board)

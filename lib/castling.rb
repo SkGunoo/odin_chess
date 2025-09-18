@@ -13,7 +13,6 @@ class Castling
 
   def castling_check(chosen_piece, input_location)
     player = @board.players[chosen_piece.player_number]
-    # location = @locations[@current_player].select {|e| e == input_location}
     rook_location = get_rook_location(input_location, @rook_location, player)
     rook = player.pieces.select { |piece| piece.current_location == rook_location}
     rook_location_to_move_to = get_rook_location(input_location, @rook_moving_location, player)
