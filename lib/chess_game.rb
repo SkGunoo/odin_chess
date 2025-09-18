@@ -91,6 +91,7 @@ class ChessGame
       ask_player_to_make_a_move(currnet_player)
     else
       @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki'
+      @en_passant.en_passant_check_after_pawn_move(chosen_piece, location) if chosen_piece.piece_type = 'pa'
       @board.move_piece(chosen_piece, location) 
     end
   end

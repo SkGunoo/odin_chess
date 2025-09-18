@@ -3,7 +3,15 @@ class EnPassant
     @board = board
   end
 
-  
+  def en_passant_check_after_pawn_move(chosen_piece, location)
+    offset = chosen_piece.player_number == 0 ? 1 : -1 
+    behind_position = [location[0] + offset, location[1] ]
+    pawn = @board.board_with_object[behind_position[0]][behind_position[1]]
+    return unless chosen_piece.can_en_passant == true && pawn&.can_get_en_passant == true
+    
+    pawn.dead = true
+    
+  end
   
   def update_can_get_en_passant(turn_number)
     all_pawns = get_all_pawns
@@ -23,24 +31,6 @@ class EnPassant
     end 
   end
 
-
-
-
-  # def update_can_en_passant(chosen_piece)
-  #   row = chosen_piece.player_number == 0 ? 3 : 4
-  #   if chosen_piece.current_location[0] == row 
-  #     chosen_piece.can_en_passant = true
-  #   else
-  #     false
-  #   end
-    
-  # end
-
-  #get all pawns and update the 
-  #@can_en_pasasnt accoring
-  #to its location
-  
-  ######### 
   def update_can_en_passant
     all_pawns = get_all_pawns
     all_pawns&.each do |pawn|

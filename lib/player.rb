@@ -81,11 +81,11 @@ class Player
     ##########pawn en passant test set up
     if player_number == 0 
       
-      @pieces << instance_variable_set("@pawn4", Pawn.new(@player_number, 'pa', [6, 5]))
+      @pieces << instance_variable_set("@pawn4", Pawn.new(@player_number, 'pa', [6, 2]))
 
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [7, 1]))
     else
-      @pieces << instance_variable_set("@pawn1", Pawn.new(@player_number, 'pa', [4, 4]))
+      @pieces << instance_variable_set("@pawn1", Pawn.new(@player_number, 'pa', [4, 3]))
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [0, 3]))
 
       # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 7]))
