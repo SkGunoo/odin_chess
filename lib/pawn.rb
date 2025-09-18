@@ -54,4 +54,5 @@ class Pawn < ChessPiece
   def switch_direction_depends_on_player(num)
     @player_number == 0 ? num * -1 : num
   end
+
 end

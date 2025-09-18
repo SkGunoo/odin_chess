@@ -7,7 +7,7 @@ class EnPassant
     offset = chosen_piece.player_number == 0 ? 1 : -1 
     behind_position = [location[0] + offset, location[1] ]
     pawn = @board.board_with_object[behind_position[0]][behind_position[1]]
-    return unless chosen_piece.can_en_passant == true && pawn&.can_get_en_passant == true
+    return unless chosen_piece.can_en_passant == true && pawn&.can_get_en_passant == true && pawn&.player_number != chosen_piece.player_number
     
     pawn.dead = true
     
@@ -62,7 +62,7 @@ class EnPassant
 
   def check_left_right_for_pawn(chosen_piece)
     left_right_pieces = [chosen_piece.nearby_pieces[1], chosen_piece.nearby_pieces[2]]
-    result = left_right_pieces.select { |piece| piece&.piece_type == 'pa' && piece.can_get_en_passant == true }
+    result = left_right_pieces.select { |piece| piece&.piece_type == 'pa' && piece.can_get_en_passant == true && piece.player_number != chosen_piece.player_number}
     result
   end
 
