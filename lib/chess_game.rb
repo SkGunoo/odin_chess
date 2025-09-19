@@ -92,6 +92,7 @@ class ChessGame
     else
       @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki'
       @en_passant.en_passant_check_after_pawn_move(chosen_piece, location) if chosen_piece.piece_type == 'pa'
+      @current_player.promote_pawn(chosen_piece, location) if chosen_piece.piece_type == 'pa' && chosen_piece.reached_end?(location)
       @board.move_piece(chosen_piece, location) 
     end
   end

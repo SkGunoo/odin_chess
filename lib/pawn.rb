@@ -55,4 +55,20 @@ class Pawn < ChessPiece
     @player_number == 0 ? num * -1 : num
   end
 
+
+  def reached_end?(location)
+    end_location = @player_number == 0 ? 0 : 7
+    true if location[0] == end_location
+  end
+
+  def pick_piece
+    vaild_answers = [1,2,3,4]
+    answer = nil
+    until vaild_answers.include?(answer)
+      puts "your pawn reached the end, pick piece to promote your pawn."
+      puts "1: Knight, 2: Bishop, 3: Rook, 4: Queen "
+      answer = gets.chomp.to_i
+    end
+    answer - 1
+  end
 end

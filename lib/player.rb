@@ -81,7 +81,7 @@ class Player
     ##########pawn en passant test set up
     if player_number == 0 
       
-      @pieces << instance_variable_set("@pawn4", Pawn.new(@player_number, 'pa', [6, 2]))
+      @pieces << instance_variable_set("@pawn4", Pawn.new(@player_number, 'pa', [1, 2]))
 
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [7, 1]))
     else
@@ -146,5 +146,19 @@ class Player
       piece.get_movable_positions(board).size > 1
     end
     pieces_can_move
+  end
+
+  def promote_pawn(chosen_piece, location)
+    index = chosen_piece.pick_piece
+    class_match = { 'kn' => Knight, 'bi' => Bishop,'ro'=> Rook, 'qu' => Queen}
+
+    # promotes = {Knight => 'kn', Bishop => 'bi', Rook => 'ro', Queen => 'qu'}
+    # promotes = {Knight: 'kn', Bishop: 'bi', Rook: 'ro', Queen: 'qu'}
+    class_type = class_match.values[index]
+    piece_type = class_match.keys[index]
+    chosen_piece.dead = true
+    check_for_dead_pieces
+    @pieces << instance_variable_set("@#{class_type.to_s}",class_type.new( @player_number, piece_type, location)   )
+
   end
 end
