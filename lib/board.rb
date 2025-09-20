@@ -126,9 +126,9 @@ class Board
 
   def display_hlighlited_locations(locations,chosen_piece)
     display_board(locations)
-    puts "Type\e[33m'g'\e[0m if you want to go back and choose another piece to move  \n"
-    puts "\nyou can move the piece \e[33m#{chosen_piece.symbol}\e[0m to highlighted tiles"
-    puts "type the location(example: a4, d4) then press enter" 
+    # puts "Type\e[33m'g'\e[0m if you want to go back and choose another piece to move  \n"
+    # puts "\nyou can move the piece \e[33m#{chosen_piece.symbol}\e[0m to highlighted tiles"
+    # puts "type the location(example: a4, d4) then press enter" 
   end
 
     #move the given piece to specific location

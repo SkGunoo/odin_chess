@@ -71,7 +71,7 @@ class ChessGame
 
   rescue => error
     puts "Error loading game: #{error.message}"
-    puts "Error type: #{error.class}"  # This helps us see what went wrong
+    puts "Error type: #{error.class}"
     return nil
   end
 
@@ -111,9 +111,11 @@ class ChessGame
 
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
-    puts "\nYou can press \e[33m's'\e[0m to save the game and exit"
-    puts "\n\e[33m-#{@current_player.name}\e[0m, choose which type of piece to move (enter the number):"
-    puts " --#{array_to_string.join("")}"
+    puts "\nYou can type \e[33m's'\e[0m and press enter to save the game and exit"
+    puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+    puts "\e[33m-#{@current_player.name}\e[0m, choose which type of chesspiece you want to move."
+    puts "--Type the number then press enter:"
+    puts "---#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
     chosen_piece = choose_actual_piece(piece_type_user_chose.downcase)
@@ -140,9 +142,12 @@ class ChessGame
     #this filters the pieces that has no play to go
     pieces = pieces.select {|piece| piece.get_movable_positions(@board).size > 1}
     locations = pieces.map.with_index {|piece,index| "#{index + 1}:#{piece.convert_array_index_to_chess_location(piece.current_location)}  "}
+    @board.display_board(pieces.map{|piece| piece.current_location})
     if locations.size > 1
-      puts "-which #{piece_type_user_chose}, you want to choose to move?"
-      puts "--#{locations.join('')}"
+      puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+      puts "-\e[33m#{@current_player.name}\e[0m, which #{piece_type_user_chose}, you want to choose to move?"
+      puts "--Type a number and press enter"
+      puts "---#{locations.join('')}"
       pieces[get_vailid_answer(locations)]
     else
       pieces[0]
@@ -176,12 +181,15 @@ class ChessGame
   def get_location_from_user(available_locations)
     #also need to check if user input is one of the
     #available moves
-    answer = gets.chomp
-    return nil if answer == 'g'
-    valid_location = location_input_check(answer,available_locations)
+    # answer = gets.chomp
+    # return nil if answer == 'g'
+    # valid_location = location_input_check(answer,available_locations)
+    valid_location = nil
     until valid_location
-      puts "Type\e[33m'g'\e[0m if you want to go back and choose another piece to move  \n"
-      puts "type the location from highlighted tiles(example: a4, d4) then press enter " 
+      puts " Type\e[31m'g'\e[0m if you want to go back and choose another piece to move  \n"
+      puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"      
+      puts "-\e[33m#{@current_player.name}\e[0m you can move the piece you chose to one of the \e[43m highlighted tiles\e[0m"
+      puts "--type a location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
       return nil if answer == 'g'
       valid_location = location_input_check(answer,available_locations)
