@@ -61,11 +61,11 @@ class Pawn < ChessPiece
     true if location[0] == end_location
   end
 
-  def pick_piece
+  def pick_piece(name)
     vaild_answers = [1,2,3,4]
     answer = nil
     until vaild_answers.include?(answer)
-      puts "your pawn reached the end, pick piece to promote your pawn."
+      puts "\e[33m #{name} \e[0m your pawn reached the end, pick piece to promote your pawn."
       puts "1: Knight, 2: Bishop, 3: Rook, 4: Queen "
       answer = gets.chomp.to_i
     end
