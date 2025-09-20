@@ -113,8 +113,9 @@ class ChessGame
     array_to_string = available_types.map.with_index {|type,index| "#{index + 1}:#{type}  "}
     puts "\nYou can type \e[33m's'\e[0m and press enter to save the game and exit"
     puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-    puts "\e[33m-#{@current_player.name}\e[0m, choose which type of chesspiece you want to move."
+    puts "\e[4m\e[33m-#{@current_player.name}\e[0m, choose which type of chesspiece you want to move."
     puts "--Type the number then press enter:"
+    puts "------------------------------------------------"
     puts "---#{array_to_string.join("")}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
     #piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
@@ -145,8 +146,9 @@ class ChessGame
     @board.display_board(pieces.map{|piece| piece.current_location})
     if locations.size > 1
       puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-      puts "-\e[33m#{@current_player.name}\e[0m, which #{piece_type_user_chose}, you want to choose to move?"
+      puts "-\e[4m\e[33m#{@current_player.name}\e[0m, which \e[4m\e[32m#{piece_type_user_chose}\e[0m, you want to choose to move?"
       puts "--Type a number and press enter"
+      puts "-------------------------------"
       puts "---#{locations.join('')}"
       pieces[get_vailid_answer(locations)]
     else
@@ -188,7 +190,7 @@ class ChessGame
     until valid_location
       puts " Type\e[31m'g'\e[0m if you want to go back and choose another piece to move  \n"
       puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"      
-      puts "-\e[33m#{@current_player.name}\e[0m you can move the piece you chose to one of the \e[43m highlighted tiles\e[0m"
+      puts "-\e[33m#{@current_player.name}\e[0m you can move the piece you chose to one of the \e[43mhighlighted tiles \e[0m"
       puts "--type a location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
       return nil if answer == 'g'
