@@ -33,7 +33,7 @@ class ChessGame
   def load_game? 
     done = false
     until done
-      puts "Saved game found! \n Do you want to load it? press \e[33m'1'\e[0m to load, press \e[33m'2'\e[0m to start a new game"
+      puts "-Saved game found! \n--Do you want to load it? type \e[33m'1'\e[0m then press enter to load or type \e[33m'2'\e[0m then press enter start a new game"
       answer = gets.chomp.to_s
       done = true if answer == '1'
       return false if answer == '2'
@@ -50,7 +50,7 @@ class ChessGame
       'winchecker' => @winchecker,
       'illegal_move' => @illegal_move
     }
-    # YAML.dump converts our object directly to YAML format
+
     File.write(filename, YAML.dump(data))
     puts "Game saved to #{filename}!"
     exit
