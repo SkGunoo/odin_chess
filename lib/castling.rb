@@ -17,7 +17,7 @@ class Castling
     rook = player.pieces.select { |piece| piece.current_location == rook_location}
     rook_location_to_move_to = get_rook_location(input_location, @rook_moving_location, player)
     @board.move_piece(rook[0], rook_location_to_move_to) unless rook[0].nil?
-
+    @board.last_four_moves[-1][1] = ["#{player.name} used castling"]
   end
 
 

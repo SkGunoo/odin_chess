@@ -4,7 +4,7 @@ require_relative 'player.rb'
 
 class Board 
 
-  attr_accessor :board, :board_with_object, :player_one, :player_two, :players
+  attr_accessor :board, :board_with_object, :player_one, :player_two, :players, :last_four_moves
 
   def initialize 
     @board = Array.new(8) { Array.new(8)}
@@ -14,6 +14,7 @@ class Board
     @player_one = Player.new("Player One",0)
     @player_two = Player.new("Player Two",1)
     @players = [@player_one, @player_two]
+    @last_four_moves = [[[],[]],[[],[]],[[],[]],[[],[]]]
   end
 
   def display_board(highlights = [])
@@ -45,13 +46,35 @@ class Board
         "#{edited_tile}"
       end
     end
-    "   #{(8 - index)} |#{tile_sction.join("|")}| #{(8 - index)}\n"
+    "   #{(8 - index)} |#{tile_sction.join("|")}| #{(8 - index)}       #{test_addiontal(index)}\n"
   end
 
+  def test_addiontal(row)
+
+    case row
+    when 0 
+      @last_four_moves.reverse[0][0]&.join
+    when 1 
+      @last_four_moves.reverse[0][1]&.join if @last_four_moves.reverse[0][1]
+    when 2
+      @last_four_moves.reverse[1][0]&.join if @last_four_moves.size > 1
+    when 3
+
+    when 4
+      @last_four_moves.reverse[2][0]&.join if @last_four_moves.size > 2
+
+    when 5
+      " "
+    when 6 
+      @last_four_moves.reverse[3][0]&.join if @last_four_moves.size > 3
+    when 7 
+      "  "
+    end
+  end
 
   def print_column_numbers(side)
     #3 elements 
-    elements = ["     🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n",
+    elements = ["     🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹          🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n",
     "       a   b   c   d   e   f   g   h  ",
     " "]
     puts_order = side == "top" ? (0..2).to_a.reverse : (0..2).to_a 
@@ -115,8 +138,11 @@ class Board
   end
 
   def kill_opponent_piece(chosen_piece, location)
+    player = chosen_piece.player_number == 1 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
+
     if opponent_piece = @board_with_object[location[0]][location[1]]
       opponent_piece.dead = true
+      @last_four_moves[-1][1] = ["         and captured #{player}'s \e[34m#{opponent_piece.class}\e[0m"]
       @player_one.check_for_dead_pieces
       @player_two.check_for_dead_pieces
       
@@ -133,7 +159,8 @@ class Board
 
     #move the given piece to specific location
 
-  def move_piece(chosen_piece, location)
+  def move_piece(chosen_piece, location, turn_number = 0)
+    @last_four_moves << add_move_history(chosen_piece, location, turn_number)
     chosen_piece.location_history << location
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
@@ -147,7 +174,14 @@ class Board
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
     chosen_piece.number_of_moves += 1
-    
+  end
+
+  def add_move_history(chosen_piece, location, turn_number)
+    @last_four_moves.clear if turn_number == 1
+    current_location = chosen_piece.convert_array_index_to_chess_location(chosen_piece.current_location)
+    moving_location =chosen_piece.convert_array_index_to_chess_location(location)
+    player = chosen_piece.player_number == 0 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
+    [["\e[31mTurn ##{turn_number}:\e[0m #{player} moved \e[34m#{chosen_piece.class.to_s}\e[0m from #{current_location} to #{moving_location}".rjust(5)],[]]
   end
   
 

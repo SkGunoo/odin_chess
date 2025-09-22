@@ -7,6 +7,8 @@ require_relative 'en_passant.rb'
 require 'yaml'
 
 class ChessGame 
+
+  attr_accessor :turn_number
   def initialize
     @board = Board.new 
     @game_over = false
@@ -15,7 +17,7 @@ class ChessGame
     @illegal_move = IllegalMove.new(@board, @current_player)
     @castling = Castling.new(@board, @winchecker, @current_player)
     @en_passant = EnPassant.new(@board)
-    @turn_number = 0
+    @turn_number = 1
   end
 
   def play_game
@@ -33,7 +35,8 @@ class ChessGame
   def load_game? 
     done = false
     until done
-      puts "-Saved game found! \n--Do you want to load it? type \e[33m'1'\e[0m then press enter to load or type \e[33m'2'\e[0m then press enter start a new game"
+      puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Saved game found!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+      puts "--Type \e[33m'1'\e[0m then press enter to load \e[32msaved game\e[0m or \n  type \e[33m'2'\e[0m then press enter start a \e[33mnew game\e[0m"
       answer = gets.chomp.to_s
       done = true if answer == '1'
       return false if answer == '2'
@@ -48,7 +51,10 @@ class ChessGame
       'game_over' => @game_over,
       'current_player' => @current_player,
       'winchecker' => @winchecker,
-      'illegal_move' => @illegal_move
+      'illegal_move' => @illegal_move,
+      'castling' => @castling,
+      'en_passant' => @en_passant,
+      'turn_number' =>@turn_number
     }
 
     File.write(filename, YAML.dump(data))
@@ -60,14 +66,17 @@ class ChessGame
     return nil unless File.exist?(filename)
     
     data = YAML.load_file(filename, permitted_classes: [
-      Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker
-    ],aliases: true)
+      Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker,
+    EnPassant, Castling],aliases: true)
 
     @board = data['board']
     @game_over = data['game_over']
     @current_player = data['current_player']
     @winchecker = data['winchecker']
     @illegal_move = data['illegal_move']
+    @castling = data['castling']
+    @en_passant = data['en_passant']
+    @turn_number = data['turn_number']
 
   rescue => error
     puts "Error loading game: #{error.message}"
@@ -90,14 +99,18 @@ class ChessGame
     if @illegal_move.illegal_move?(chosen_piece, location)
       ask_player_to_make_a_move(currnet_player)
     else
+      @current_player.promote_pawn(chosen_piece, location) if chosen_piece.piece_type == 'pa' && chosen_piece.reached_end?(location)
+      @board.move_piece(chosen_piece, location, @turn_number) 
       @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki'
       @en_passant.en_passant_check_after_pawn_move(chosen_piece, location) if chosen_piece.piece_type == 'pa'
-      @current_player.promote_pawn(chosen_piece, location) if chosen_piece.piece_type == 'pa' && chosen_piece.reached_end?(location)
-      @board.move_piece(chosen_piece, location) 
     end
   end
 
   def choose_a_piece(current_player)
+    #show board again so user can choose the 
+    #piece again
+    @board.display_board
+
     choose_the_type(get_available_types(current_player))
   end
 

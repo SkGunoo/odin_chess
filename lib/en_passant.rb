@@ -4,11 +4,14 @@ class EnPassant
   end
 
   def en_passant_check_after_pawn_move(chosen_piece, location)
+    player = chosen_piece.player_number == 1 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
+
     offset = chosen_piece.player_number == 0 ? 1 : -1 
     behind_position = [location[0] + offset, location[1] ]
     pawn = @board.board_with_object[behind_position[0]][behind_position[1]]
     return unless chosen_piece.can_en_passant == true && pawn&.can_get_en_passant == true && pawn&.player_number != chosen_piece.player_number
-    
+    @board.last_four_moves[-1][1] = ["and captured #{player}'s \e[34m#{pawn.class}\e[0m with en_passant"]
+
     pawn.dead = true
     
   end
