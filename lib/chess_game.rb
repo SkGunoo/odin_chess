@@ -15,8 +15,8 @@ class ChessGame
     @game_over = false
     @board = Board.new(self)
     @current_player = @board.player_one
-    @winchecker = Winchecker.new(@board, @current_player)
     @illegal_move = IllegalMove.new(@board, @current_player)
+    @winchecker = Winchecker.new(@board, @current_player, @illegal_move)
     @castling = Castling.new(@board, @winchecker, @current_player)
     @en_passant = EnPassant.new(@board)
     @turn_number = 1
@@ -36,7 +36,8 @@ class ChessGame
       @board.display_board
       ask_player_to_make_a_move(@current_player)
       update_after_a_move()
-      # @game_over = @winchecker.checkmate_check(@current_player)
+      @game_over = @winchecker.checkmate_check(@current_player)
+      save_game
     end
   end
 

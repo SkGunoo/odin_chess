@@ -18,15 +18,17 @@ class Pawn < ChessPiece
     if blocked_by_another_piece?
       movable_positions = movable_positions + catchable_chesspieces
     else
-      movable_positions = forward_locations + catchable_chesspieces
+      movable_positions = forward_locations(board) + catchable_chesspieces
     end
     movable_positions
     # [[6, 0],[4,0],[5,0]]
   end
 
-  def forward_locations 
+  def forward_locations(board)
     location = @current_location
-    if @number_of_moves == 0
+    second_tile = [location[0] + switch_direction_depends_on_player(2),location[1]]
+    
+    if @number_of_moves == 0 && board.board_with_object[second_tile[0]][second_tile[1]].nil?
       [location,[location[0] + switch_direction_depends_on_player(1),@current_location[1]],[location[0] + switch_direction_depends_on_player(2),location[1]]]
 
     else

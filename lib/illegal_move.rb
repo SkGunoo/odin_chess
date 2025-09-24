@@ -23,7 +23,7 @@ class IllegalMove
     copied_chosen_piece = find_the_same_piece_from_copy(chosen_piece, board_copy)
     board_copy.move_piece_for_testing(copied_chosen_piece, location)
     current_player = board_copy.players[chosen_piece.player_number]
-    winchecker = Winchecker.new(board_copy, current_player)
+    winchecker = Winchecker.new(board_copy, current_player, self)
     # winchcker.checked requires updated board
     board_copy.update_board
     winchecker.checked?(current_player)

@@ -151,7 +151,7 @@ class Player
   end
 
   def promote_pawn(chosen_piece, location)
-    index = chosen_piece.pick_piece(@name)
+    index = @ai == true ? 3 : chosen_piece.pick_piece(@name)
     class_match = { 'kn' => Knight, 'bi' => Bishop,'ro'=> Rook, 'qu' => Queen}
 
     # promotes = {Knight => 'kn', Bishop => 'bi', Rook => 'ro', Queen => 'qu'}

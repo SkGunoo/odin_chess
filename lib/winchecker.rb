@@ -1,8 +1,9 @@
 class Winchecker
   
-  def initialize(board, current_player)
+  def initialize(board, current_player, illegal_move)
     @board = board
     @current_player = current_player
+    @illegal_move = illegal_move
   end
 
   # def checked?()
@@ -87,7 +88,7 @@ class Winchecker
   end
 
   def checkmate_check(player)
-    if king_cannot_escape_check?(player)
+    if king_cannot_escape_check?(player) && can_anyone_save_king?(player)
       opponent = opponent_player(player)
       puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
       true
@@ -97,7 +98,12 @@ class Winchecker
   end
 
   def can_anyone_save_king?(player)
-    get_all_the_moves = get_all_possible_locations_from_all_pieces
+    get_all_the_moves = get_all_possible_locations_from_all_pieces(player)
+    get_all_the_moves.any? do |move|
+      piece = move[0]
+      location = move[1]
+      @illegal_move.illegal_move_checker(piece, location)
+    end
   end
 
   def get_all_possible_moves_of_all_pieces(player)
@@ -109,4 +115,6 @@ class Winchecker
     end
     moves
   end
+
+
 end
