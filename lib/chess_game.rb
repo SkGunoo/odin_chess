@@ -4,35 +4,44 @@ require_relative 'winchecker.rb'
 require_relative 'illegal_move.rb'
 require_relative 'castling.rb'
 require_relative 'en_passant.rb'
+require_relative 'basic_ai.rb'
 require 'yaml'
 
 class ChessGame 
 
   attr_accessor :turn_number
+  attr_reader :illegal_move
   def initialize
-    @board = Board.new 
     @game_over = false
+    @board = Board.new(self)
     @current_player = @board.player_one
     @winchecker = Winchecker.new(@board, @current_player)
     @illegal_move = IllegalMove.new(@board, @current_player)
     @castling = Castling.new(@board, @winchecker, @current_player)
     @en_passant = EnPassant.new(@board)
     @turn_number = 1
+    @game_loaded = false
+  end
+
+  def illegal_move
+    @illegal_move ||= IllegalMove.new(@board, @current_player)
   end
 
   def play_game
     welcome_message
     load_game? if File.exist?('chess_game.yml')
+    vs_player_or_ai unless @game_loaded
     until @game_over
       @board.update_board
       @board.display_board
       ask_player_to_make_a_move(@current_player)
       update_after_a_move()
-      @game_over = @winchecker.checkmate_check(@current_player)
+      # @game_over = @winchecker.checkmate_check(@current_player)
     end
   end
 
   def load_game? 
+
     done = false
     until done
       puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Saved game found!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
@@ -54,7 +63,8 @@ class ChessGame
       'illegal_move' => @illegal_move,
       'castling' => @castling,
       'en_passant' => @en_passant,
-      'turn_number' =>@turn_number
+      'turn_number' =>@turn_number,
+      'game_loaded' => @game_loaded
     }
 
     File.write(filename, YAML.dump(data))
@@ -67,7 +77,7 @@ class ChessGame
     
     data = YAML.load_file(filename, permitted_classes: [
       Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker,
-    EnPassant, Castling],aliases: true)
+    EnPassant, Castling, BasicAi, ChessGame],aliases: true)
 
     @board = data['board']
     @game_over = data['game_over']
@@ -77,7 +87,8 @@ class ChessGame
     @castling = data['castling']
     @en_passant = data['en_passant']
     @turn_number = data['turn_number']
-
+    @game_loaded = data['game_loaded']
+    @game_loaded = true
   rescue => error
     puts "Error loading game: #{error.message}"
     puts "Error type: #{error.class}"
@@ -85,23 +96,25 @@ class ChessGame
   end
 
   def welcome_message
+    
   end
 
-  def ask_player_to_make_a_move(currnet_player)
-    chosen_piece = nil
-    location = nil 
+  def ask_player_to_make_a_move(current_player)
+    ai_move = current_player.pick_one_random_move if current_player.ai
+    chosen_piece = current_player.ai ? ai_move[0] : nil
+    location = current_player.ai ? ai_move[1] : nil 
     until chosen_piece && location
-      msg_if_player_is_checked(currnet_player)
-      chosen_piece = choose_a_piece(currnet_player)
+      msg_if_player_is_checked(current_player)
+      chosen_piece = choose_a_piece(current_player)
       location = get_location_to_move_piece(chosen_piece) 
     end
 
     if @illegal_move.illegal_move?(chosen_piece, location)
-      ask_player_to_make_a_move(currnet_player)
+      ask_player_to_make_a_move(current_player)
     else
       @current_player.promote_pawn(chosen_piece, location) if chosen_piece.piece_type == 'pa' && chosen_piece.reached_end?(location)
       @board.move_piece(chosen_piece, location, @turn_number) 
-      @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki'
+      @castling.castling_check(chosen_piece, location) if chosen_piece.piece_type == 'ki' && @current_player.check == false
       @en_passant.en_passant_check_after_pawn_move(chosen_piece, location) if chosen_piece.piece_type == 'pa'
     end
   end
@@ -183,7 +196,7 @@ class ChessGame
   
   def get_available_locations (chosen_piece)
     available_locations = chosen_piece.get_movable_positions(@board)
-    available_locations += @castling.castling_positions(chosen_piece) if chosen_piece.piece_type == 'ki'
+    available_locations += @castling.castling_positions(chosen_piece) if chosen_piece.piece_type == 'ki' && @current_player.check == false
     available_locations += @en_passant.en_passant_positions(chosen_piece) if chosen_piece.piece_type == 'pa'
     available_locations
   end
@@ -245,14 +258,30 @@ class ChessGame
     end
   end
 
-  # def player_still_checked?(chosen_piece, location)
-  #   board_backup = Marshal.load(Marshal.dump(@board))
-  #   @board.move_piece(chosen_piece, location)
-  #   checked = @winchecker.checked?(@current_player)
-  #   puts "\n \e[33m#{"this move doesn't save your king, try different move"}\e[0m" if checked
-    
-  #   @winchecker.back_up_to_original(board_backup) if checked
-  #   checked ? true : false
-  # end
+  def vs_player_or_ai
+    game_mode = get_game_mode_answer
+    case game_mode
+      when 1 
+        nil
+      when 2
+        player = @board.player_two = BasicAi.new('Basic Ai', 1, @board, self)
+        @board.player_two.ai = true
+        #players need to be updated 
+        #without the update its still player_two
+        @board.players[1] = player 
+    end
+  end
 
+  def get_game_mode_answer
+    valid_answer = [1,2,3]
+    game_mode = nil
+    until game_mode
+      puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"      
+      puts "-Choose game mode : 1.vs player | 2. vs Bad AI | 3. vs Basic AI "
+      puts "--Type a number the press enter"
+      answer = gets.chomp.to_i
+      game_mode = answer if valid_answer.include?(answer)
+    end
+    game_mode
+  end
 end

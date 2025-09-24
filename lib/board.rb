@@ -6,13 +6,14 @@ class Board
 
   attr_accessor :board, :board_with_object, :player_one, :player_two, :players, :last_four_moves
 
-  def initialize 
+  def initialize(chess_game)
     @board = Array.new(8) { Array.new(8)}
+    @chess_game = chess_game
     #this is where chesspiece objects go 
     @board_with_object = Array.new(8) { Array.new(8)}
 
-    @player_one = Player.new("Player One",0)
-    @player_two = Player.new("Player Two",1)
+    @player_one = Player.new("Player One",0,self, @chess_game)
+    @player_two = Player.new("Player Two",1,self, @chess_game)
     @players = [@player_one, @player_two]
     @last_four_moves = [[[],[]],[[],[]],[[],[]],[[],[]]]
   end
@@ -59,16 +60,15 @@ class Board
     when 2
       @last_four_moves.reverse[1][0]&.join if @last_four_moves.size > 1
     when 3
-
+      @last_four_moves.reverse[1][1]&.join if @last_four_moves.size > 1 && @last_four_moves.reverse[1][1] 
     when 4
       @last_four_moves.reverse[2][0]&.join if @last_four_moves.size > 2
-
     when 5
-      " "
+      @last_four_moves.reverse[2][1]&.join if @last_four_moves.size > 2 && @last_four_moves.reverse[2][1]
     when 6 
       @last_four_moves.reverse[3][0]&.join if @last_four_moves.size > 3
     when 7 
-      "  "
+      @last_four_moves.reverse[3][1]&.join if @last_four_moves.size > 3 && @last_four_moves.reverse[3][1]
     end
   end
 
@@ -180,8 +180,8 @@ class Board
     @last_four_moves.clear if turn_number == 1
     current_location = chosen_piece.convert_array_index_to_chess_location(chosen_piece.current_location)
     moving_location =chosen_piece.convert_array_index_to_chess_location(location)
-    player = chosen_piece.player_number == 0 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
-    [["\e[31mTurn ##{turn_number}:\e[0m #{player} moved \e[34m#{chosen_piece.class.to_s}\e[0m from #{current_location} to #{moving_location}".rjust(5)],[]]
+    player = chosen_piece.player_number == 0 ? "\e[33mplayer 1\e[0m" : "\e[32m#{players[1].name}\e[0m"
+    [["\e[31mTurn ##{turn_number}:\e[0m #{player} moved \e[34m#{chosen_piece.class.to_s}\e[0m from #{current_location} to #{moving_location}"],[]]
   end
   
 

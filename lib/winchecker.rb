@@ -95,4 +95,18 @@ class Winchecker
       false
     end
   end
+
+  def can_anyone_save_king?(player)
+    get_all_the_moves = get_all_possible_locations_from_all_pieces
+  end
+
+  def get_all_possible_moves_of_all_pieces(player)
+    moves =[]
+    player.pieces.each do |piece|
+      piece_moves = piece.get_movable_positions(@board)
+      next if piece_moves.size < 2
+      piece_moves[1..-1].each {|move| moves << [piece, move] }
+    end
+    moves
+  end
 end
