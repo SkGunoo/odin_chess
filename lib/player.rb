@@ -13,9 +13,9 @@ class Player
     @check = false
     @checkmate = false
     @ai = false
-    # test_board_setup(player_number)
+    test_board_setup(player_number)
     @flag = false
-    setup_initial_pieces(player_number)
+    # setup_initial_pieces(player_number)
   end
 
 
@@ -52,13 +52,15 @@ class Player
     if player_number == 0 
       @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [7, 4]))
       @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 7]))
-      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 0]))
-      
-      # @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
+      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [4, 0]))
+      @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [6, 0]))
+
+      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
 
     else
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
-      
+      @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [5, 2]))
+
       # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
 
       # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))

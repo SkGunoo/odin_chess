@@ -21,6 +21,7 @@ class ChessGame
     @en_passant = EnPassant.new(@board)
     @turn_number = 1
     @game_loaded = false
+    
   end
 
   def illegal_move
@@ -70,7 +71,7 @@ class ChessGame
 
     File.write(filename, YAML.dump(data))
     puts "Game saved to #{filename}!"
-    exit
+    # exit
   end
 
   def load_game(filename = "chess_game.yml")
@@ -105,7 +106,6 @@ class ChessGame
     chosen_piece = current_player.ai ? ai_move[0] : nil
     location = current_player.ai ? ai_move[1] : nil 
     until chosen_piece && location
-      msg_if_player_is_checked(current_player)
       chosen_piece = choose_a_piece(current_player)
       location = get_location_to_move_piece(chosen_piece) 
     end
@@ -123,7 +123,8 @@ class ChessGame
   def choose_a_piece(current_player)
     #show board again so user can choose the 
     #piece again
-    @board.display_board
+    # @board.display_board
+    msg_if_player_is_checked(current_player)
 
     choose_the_type(get_available_types(current_player))
   end

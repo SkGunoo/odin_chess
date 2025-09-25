@@ -24,6 +24,7 @@ class Castling
   def get_rook_location(input_location, rook_location, player)
     locations = @locations[player.player_number]
     rook_locations = rook_location[player.player_number]
+    return unless locations.include?(input_location) 
     locations[0] == input_location ? rook_locations[0] : rook_locations[1]
   end
 

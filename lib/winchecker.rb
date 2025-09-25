@@ -98,7 +98,7 @@ class Winchecker
   end
 
   def can_anyone_save_king?(player)
-    get_all_the_moves = get_all_possible_locations_from_all_pieces(player)
+    get_all_the_moves = get_all_possible_moves_of_all_pieces_for_king(player)
     get_all_the_moves.any? do |move|
       piece = move[0]
       location = move[1]
@@ -106,7 +106,7 @@ class Winchecker
     end
   end
 
-  def get_all_possible_moves_of_all_pieces(player)
+  def get_all_possible_moves_of_all_pieces_for_king(player)
     moves =[]
     player.pieces.each do |piece|
       piece_moves = piece.get_movable_positions(@board)
