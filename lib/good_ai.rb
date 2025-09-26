@@ -3,7 +3,7 @@ class GoodAi < Player
   def initialize(name, player_number,board,chess_game)
     super(name, player_number, board,chess_game)
     @all_the_possible_moves = []
-    @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1}
+    @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, king: 1}
   end
 
 
@@ -52,9 +52,10 @@ class GoodAi < Player
       piece = move[0]
       location = move[1]
       tile_content = @board.board_with_object[location[0]][location[1]]
+      score += 2 if piece.piece_type == "pa" && piece.num_of_moves > 1
       score -= @score_sheet[class_to_sym(piece)] if opponent_tiles.include?(location)
       score += @score_sheet[class_to_sym(tile_content)] unless tile_content.nil?
-      score += 10 if can_catch_king_next_move?(piece, location, opponent_king_location)
+      score += 10 if can_catch_king_next_move?(piece, location, opponent_king_location) && !opponent_tiles.include?(location)
       [piece, location, score]
     end
   end
@@ -69,6 +70,9 @@ class GoodAi < Player
     next_movable_place.include?(opponent_king_location)
   end
 
+  def dont_get_kill_by_king(board,ch)
+    
+  end
 
   def class_to_sym(chess_piece)
     chess_piece.class.to_s.to_sym
@@ -79,7 +83,7 @@ class GoodAi < Player
     puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
     puts "Good Ai is thinking........".rjust(10)
     puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-    sleep(2)
+    # sleep(2)
   end
 
 

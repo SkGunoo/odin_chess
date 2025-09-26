@@ -83,7 +83,7 @@ class ChessGame
     
     data = YAML.load_file(filename, permitted_classes: [
       Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker,
-    EnPassant, Castling, BasicAi, ChessGame, GoodAi],aliases: true)
+    EnPassant, Castling, BasicAi, ChessGame, GoodAi, Symbol],aliases: true)
 
     @board = data['board']
     @game_over = data['game_over']

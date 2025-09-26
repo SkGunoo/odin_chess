@@ -88,7 +88,7 @@ class Winchecker
   end
 
   def checkmate_check(player)
-    if king_cannot_escape_check?(player) && !can_anyone_save_king?(player)
+    if king_cannot_escape_check?(player) && can_anyone_save_king?(player)
       opponent = opponent_player(player)
       puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
       true
@@ -110,7 +110,7 @@ class Winchecker
     moves =[]
     player.pieces.each do |piece|
       piece_moves = piece.get_movable_positions(@board)
-      next if piece_moves.size < 2
+      next if piece_moves.size < 2 || piece.piece_type == 'ki'
       piece_moves[1..-1].each {|move| moves << [piece, move] }
     end
     moves
