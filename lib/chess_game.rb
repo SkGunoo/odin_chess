@@ -5,12 +5,13 @@ require_relative 'illegal_move.rb'
 require_relative 'castling.rb'
 require_relative 'en_passant.rb'
 require_relative 'basic_ai.rb'
+require_relative 'good_ai.rb'
 require 'yaml'
 
 class ChessGame 
 
-  attr_accessor :turn_number
-  attr_reader :illegal_move
+  attr_accessor :turn_number,:winchecker
+  attr_reader :illegal_move 
   def initialize
     @game_over = false
     @board = Board.new(self)
@@ -28,6 +29,9 @@ class ChessGame
     @illegal_move ||= IllegalMove.new(@board, @current_player)
   end
 
+  # def winchecker
+  #   @winchecker ||= Winchecker.new(@board, @current_player, @illegal_move)
+  # end
   def play_game
     welcome_message
     load_game? if File.exist?('chess_game.yml')
@@ -79,7 +83,7 @@ class ChessGame
     
     data = YAML.load_file(filename, permitted_classes: [
       Board, ChessPiece, Bishop, IllegalMove, King, Knight, Pawn, Player, Queen, Rook, Winchecker,
-    EnPassant, Castling, BasicAi, ChessGame],aliases: true)
+    EnPassant, Castling, BasicAi, ChessGame, GoodAi],aliases: true)
 
     @board = data['board']
     @game_over = data['game_over']
@@ -102,7 +106,7 @@ class ChessGame
   end
 
   def ask_player_to_make_a_move(current_player)
-    ai_move = current_player.pick_one_random_move if current_player.ai
+    ai_move = current_player.pick_one_move if current_player.ai
     chosen_piece = current_player.ai ? ai_move[0] : nil
     location = current_player.ai ? ai_move[1] : nil 
     until chosen_piece && location
@@ -271,6 +275,25 @@ class ChessGame
         #players need to be updated 
         #without the update its still player_two
         @board.players[1] = player 
+
+        #ai vs ai test 
+        # player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
+        # @board.player_one.ai = true
+        # @board.players[0] = player_one 
+        # @current_player = player_one
+      when 3 
+        player = @board.player_two = GoodAi.new('Good Ai', 1, @board, self)
+        @board.player_two.ai = true
+        #players need to be updated 
+        #without the update its still player_two
+        @board.players[1] = player 
+
+        # ai vs ai test 
+        player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
+        @board.player_one.ai = true
+        @board.players[0] = player_one 
+        @current_player = player_one
+
     end
   end
 

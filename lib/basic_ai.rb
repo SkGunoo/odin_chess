@@ -17,7 +17,7 @@ class BasicAi < Player
     end
   end
 
-  def pick_one_random_move
+  def pick_one_move
     ai_thinking_message
     get_all_possible_moves_of_all_pieces
     num_of_moves = @all_the_possible_moves.size - 1

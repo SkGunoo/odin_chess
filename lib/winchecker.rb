@@ -88,7 +88,7 @@ class Winchecker
   end
 
   def checkmate_check(player)
-    if king_cannot_escape_check?(player) && can_anyone_save_king?(player)
+    if king_cannot_escape_check?(player) && !can_anyone_save_king?(player)
       opponent = opponent_player(player)
       puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
       true
