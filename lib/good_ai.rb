@@ -3,15 +3,18 @@ class GoodAi < Player
   def initialize(name, player_number,board,chess_game)
     super(name, player_number, board,chess_game)
     @all_the_possible_moves = []
-    @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, king: 1}
+    @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1}
   end
 
 
   def pick_one_move
     ai_thinking_message
     @all_the_possible_moves.clear
+    num_of_moves = @all_the_possible_moves.size - 1
 
     get_all_possible_moves_of_all_pieces(@pieces, @all_the_possible_moves)
+    @chess_game.winchecker.stalemate_check(self) 
+    @chess_game.winchecker.checkmate_check(self) if num_of_moves <= 0 && @check
     scored_moves = score_moves_with_points.sort_by {|moves| -moves[2]}
     
     if scored_moves[0][2] == 10
@@ -20,7 +23,7 @@ class GoodAi < Player
     else
       highest_socre = scored_moves[0][2]
       high_scored_moves = scored_moves.select {|move| move[2] == highest_socre}
-      random_number = high_scored_moves.size - 1
+      random_number = rand(0..high_scored_moves.size - 1)
       picked_move =  high_scored_moves[random_number]
       picked_move_without_socre = picked_move[0..1]
       
@@ -52,9 +55,10 @@ class GoodAi < Player
       piece = move[0]
       location = move[1]
       tile_content = @board.board_with_object[location[0]][location[1]]
-      score += 2 if piece.piece_type == "pa" && piece.num_of_moves > 1
+      score += 7 if piece.piece_type == "pa"
+      score += 4 if piece.piece_type == "pa" && piece.number_of_moves > 1
       score -= @score_sheet[class_to_sym(piece)] if opponent_tiles.include?(location)
-      score += @score_sheet[class_to_sym(tile_content)] unless tile_content.nil?
+      score += @score_sheet[class_to_sym(tile_content)] unless tile_content.nil? 
       score += 10 if can_catch_king_next_move?(piece, location, opponent_king_location) && !opponent_tiles.include?(location)
       [piece, location, score]
     end
@@ -83,7 +87,7 @@ class GoodAi < Player
     puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
     puts "Good Ai is thinking........".rjust(10)
     puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-    # sleep(2)
+    sleep(2)
   end
 
 

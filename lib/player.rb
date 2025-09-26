@@ -51,11 +51,11 @@ class Player
     ########castling set up
     if player_number == 0 
       @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [7, 4]))
-      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 7]))
-      @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [4, 0]))
-      @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [6, 0]))
+      # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 7]))
+      # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [4, 0]))
+      # @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [6, 0]))
 
-      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
+      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 0]))
 
     else
       @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))

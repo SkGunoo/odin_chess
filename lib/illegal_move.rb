@@ -36,4 +36,6 @@ class IllegalMove
     copied_object_board[location[0]][location[1]]
   end
 
+  
+
 end

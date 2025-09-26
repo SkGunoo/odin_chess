@@ -31,10 +31,24 @@ class Winchecker
     king_movable_locations = king.get_movable_positions(@board) 
     # board_backup = Marshal.load(Marshal.dump(@board))
     locations_opponent_can_reach = get_all_possible_locations_from_all_pieces(opponent_player(player))
-    king_movable_locations.all? do |location|
-      locations_opponent_can_reach.include?(location)
+    king_movable_locations[1..-1].all? do |location|
+      king_escape_simulation(king, location)
+      # locations_opponent_can_reach.include?(location)
     end
   end
+
+  def king_escape_simulation(king, location)
+    board_copy = Marshal.load(Marshal.dump(@board))
+    copied_chosen_piece = @illegal_move.find_the_same_piece_from_copy(king, board_copy)
+    board_copy.move_piece_for_testing(copied_chosen_piece, location)
+    current_player = board_copy.players[king.player_number]
+    winchecker = Winchecker.new(board_copy, current_player, self)
+    # winchcker.checked requires updated board
+    board_copy.update_board
+    winchecker.checked?(current_player)
+  end
+
+
 
   def get_all_possible_locations_from_all_pieces(player)
     locations = []
@@ -88,9 +102,12 @@ class Winchecker
   end
 
   def checkmate_check(player)
-    if king_cannot_escape_check?(player) && can_anyone_save_king?(player)
+    # king_cannot_escape_check?(player) &&
+    if  king_cannot_escape_check?(player) && !can_anyone_save_king?(player)
       opponent = opponent_player(player)
       puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
+      @board.display_board
+      exit
       true
     else
       false
@@ -99,7 +116,8 @@ class Winchecker
 
   def can_anyone_save_king?(player)
     get_all_the_moves = get_all_possible_moves_of_all_pieces_for_king(player)
-    get_all_the_moves.any? do |move|
+    return get_all_the_moves.size.zero?
+    get_all_the_moves.all? do |move|
       piece = move[0]
       location = move[1]
       @illegal_move.illegal_move_checker(piece, location)
@@ -110,11 +128,29 @@ class Winchecker
     moves =[]
     player.pieces.each do |piece|
       piece_moves = piece.get_movable_positions(@board)
-      next if piece_moves.size < 2 || piece.piece_type == 'ki'
+      next if piece_moves.size < 2 
       piece_moves[1..-1].each {|move| moves << [piece, move] }
     end
     moves
   end
 
+  def stalemate_check(player)
+    return if player.check
+    moves = get_all_possible_moves_of_all_pieces_for_king(player)
+    if stalemate?(moves)
+      puts "game is stalemate"
+      exit
+    end
+    
+  end
+
+
+  def stalemate?(moves)
+    moves.all? do |move|
+      piece = move[0]
+      location = move[1]
+      @illegal_move.illegal_move_checker(piece, location)
+    end
+  end
 
 end

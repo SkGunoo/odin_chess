@@ -9,7 +9,8 @@ class EnPassant
     offset = chosen_piece.player_number == 0 ? 1 : -1 
     behind_position = [location[0] + offset, location[1] ]
     pawn = @board.board_with_object[behind_position[0]][behind_position[1]]
-    return unless chosen_piece.can_en_passant == true && pawn&.can_get_en_passant == true && pawn&.player_number != chosen_piece.player_number
+    return if pawn.nil?
+    return unless chosen_piece.can_en_passant == true && pawn.piece_type == 'pa' && pawn&.can_get_en_passant == true && pawn&.player_number != chosen_piece.player_number
     @board.last_four_moves[-1][1] = ["and captured #{player}'s \e[34m#{pawn.class}\e[0m with en_passant"]
 
     pawn.dead = true
