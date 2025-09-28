@@ -29,7 +29,6 @@ class EnPassant
     if history.size == 2 && (history[0][0] - history[1][0]).abs == 2 && pawn.first_moved_turn.nil?
       pawn.can_get_en_passant = true
       pawn.first_moved_turn = turn_number
-      puts " #{pawn.symbol }can get_en_passant #{pawn.can_get_en_passant}"
     else
       pawn.can_get_en_passant = false
     end 
@@ -42,7 +41,6 @@ class EnPassant
       
       if pawn.current_location[0] == row 
         pawn.can_en_passant = true
-        puts "can en_passant #{pawn.can_en_passant}" 
       else
         false
       end

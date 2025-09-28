@@ -6,14 +6,6 @@ class Winchecker
     @illegal_move = illegal_move
   end
 
-  # def checked?()
-  #   opponent_king_location = get_king_location(opponent())
-
-  #   @current_player.pieces.any? do |piece|
-  #     locations = piece.get_movable_positions(@board)
-  #     locations.include?(opponent_king_location)
-  #   end
-  # end
   
   #this check if given play's king is checked
   def checked?(player)
@@ -105,8 +97,8 @@ class Winchecker
     # king_cannot_escape_check?(player) &&
     if  king_cannot_escape_check?(player) && !can_anyone_save_king?(player)
       opponent = opponent_player(player)
-      puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
       @board.display_board
+      puts "\e[31m#{'CHECKMATE!'}\e[0m ,\e[33m#{opponent.name}\e[0m  WON"
       exit
       true
     else

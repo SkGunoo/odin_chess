@@ -25,9 +25,9 @@ class ChessGame
     
   end
 
-  def illegal_move
-    @illegal_move ||= IllegalMove.new(@board, @current_player)
-  end
+  # def illegal_move
+  #   @illegal_move ||= IllegalMove.new(@board, @current_player)
+  # end
 
   # def winchecker
   #   @winchecker ||= Winchecker.new(@board, @current_player, @illegal_move)
@@ -76,7 +76,7 @@ class ChessGame
 
     File.write(filename, YAML.dump(data))
     puts "Game saved to #{filename}!"
-    # exit
+    exit
   end
 
   def load_game(filename = "chess_game.yml")
@@ -226,7 +226,10 @@ class ChessGame
       puts "-\e[33m#{@current_player.name}\e[0m you can move the piece you chose to one of the \e[43mhighlighted tiles \e[0m"
       puts "--type a location from highlighted tiles(example: a4, d4) then press enter " 
       answer = gets.chomp
-      return nil if answer == 'g'
+      if answer == 'g'
+        @board.display_board
+        return nil 
+      end
       valid_location = location_input_check(answer,available_locations)
     end
     answer
@@ -277,11 +280,6 @@ class ChessGame
         #without the update its still player_two
         @board.players[1] = player 
 
-        #ai vs ai test 
-        # player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
-        # @board.player_one.ai = true
-        # @board.players[0] = player_one 
-        # @current_player = player_one
       when 3 
         player = @board.player_two = GoodAi.new('Good Ai', 1, @board, self)
         @board.player_two.ai = true

@@ -16,7 +16,7 @@ class Pawn < ChessPiece
     #is a catchable piece
     movable_positions = []
     if blocked_by_another_piece?
-      movable_positions = movable_positions + catchable_chesspieces
+      movable_positions = movable_positions + [@current_location] + catchable_chesspieces 
     else
       movable_positions = forward_locations(board) + catchable_chesspieces
     end
