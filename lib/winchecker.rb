@@ -134,16 +134,19 @@ class Winchecker
     moves
   end
 
-  def stalemate_check(player)
+  def stalemate_check(player, turns)
     return if player.check
     moves = get_all_possible_moves_of_all_pieces_for_king(player)
-    if stalemate?(moves)
+    if stalemate?(moves) || over_100_turns?()
       puts "game is stalemate"
       exit
     end
     
   end
 
+  def over_100_turns?(turns)
+    turns > 100
+  end
 
   def stalemate?(moves)
     moves.all? do |move|

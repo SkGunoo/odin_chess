@@ -4,6 +4,8 @@ class GoodAi < Player
     super(name, player_number, board,chess_game)
     @all_the_possible_moves = []
     @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1}
+    @score_sheet_two = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1}
+
   end
 
 
@@ -13,40 +15,74 @@ class GoodAi < Player
     num_of_moves = @all_the_possible_moves.size - 1
 
     get_all_possible_moves_of_all_pieces(@pieces, @all_the_possible_moves)
-    @chess_game.winchecker.stalemate_check(self) 
+    @chess_game.winchecker.stalemate_check(self, @chess_game.turn_number) 
     @chess_game.winchecker.checkmate_check(self) if num_of_moves <= 0 && @check
     scored_moves = score_moves_with_points.sort_by {|moves| -moves[2]}
+    pick_one_moves_from_highest_socred_moves(scored_moves)
+    # if scored_moves[0][2] == 10
+    #   picked_move = scored_moves[0]
+    #   picked_move_without_socre = picked_move[0..1]
+    # else
+    #   highest_socre = scored_moves[0][2]
+    #   high_scored_moves = scored_moves.select {|move| move[2] == highest_socre}
+    #   random_number = rand(0..high_scored_moves.size - 1)
+    #   picked_move =  high_scored_moves[random_number]
+    #   picked_move_without_socre = picked_move[0..1]
+      
+    # end
     
-    if scored_moves[0][2] == 10
-      picked_move = scored_moves[0]
-      picked_move_without_socre = picked_move[0..1]
-    else
-      highest_socre = scored_moves[0][2]
+  end
+
+  def pick_one_moves_from_highest_socred_moves(scored_moves)
+    highest_socre = scored_moves[0][2]
       high_scored_moves = scored_moves.select {|move| move[2] == highest_socre}
       random_number = rand(0..high_scored_moves.size - 1)
       picked_move =  high_scored_moves[random_number]
       picked_move_without_socre = picked_move[0..1]
       
-    end
-    
   end
 
-  def get_all_possible_moves_of_all_pieces(pieces, moves =[])
+  def get_all_possible_moves_of_all_pieces(pieces, moves =[], user_flag = 0 )
     pieces.each do |piece|
-      piece_moves = piece.get_movable_positions(@board)
-      next if piece_moves.size < 2
-      piece_moves[1..-1].each {|move| moves << [piece, move] unless @chess_game.illegal_move.illegal_move_checker(piece, move)}
+      process_moves(piece, moves, user_flag )
     end
     moves
   end
 
+  def process_moves(piece, moves, user_flag)
+    piece_moves = piece.get_movable_positions(@board) 
+    return if piece_moves.size < 2
+    piece_moves = user_flag.zero? ? piece_moves[1..-1] : piece_moves
+    
+    piece_moves.each do |move| 
+      if user_flag.zero?
+        moves << [piece, move] unless @chess_game.illegal_move.illegal_move_checker(piece, move)
+      else
+        moves << [piece, move]
+      end
+    end
+    
+
+  end
+  
   def score_moves_with_points
     opponent = @chess_game.winchecker.opponent_player(self)
-    opponent_moves = get_all_possible_moves_of_all_pieces(opponent.pieces)
+    opponent_moves = get_all_possible_moves_of_all_pieces(opponent.pieces,[] ,1)
+    opponent_moves += get_pawns_possible_catchable_places(opponent.pieces)
+    # p opponent_moves
     tiles_opponent_can_reach = opponent_moves.map {|move| move[1]}
     opponent_king_location = @chess_game.winchecker.get_king_location(opponent)
     scored_moves = score_moves_with_points_part_two(tiles_opponent_can_reach, opponent_king_location)
     
+  end
+
+  def get_pawns_possible_catchable_places(opponent_pieces)
+    moves = []
+    pawns = opponent_pieces.select {|piece| piece.piece_type == 'pa'}
+    pawns.map do |pawn|
+      moves << pawn.possible_pawn_catchable_places
+    end
+    moves
   end
 
   def score_moves_with_points_part_two(opponent_tiles, opponent_king_location)
@@ -55,9 +91,11 @@ class GoodAi < Player
       piece = move[0]
       location = move[1]
       tile_content = @board.board_with_object[location[0]][location[1]]
-      score += 7 if piece.piece_type == "pa"
-      score += 4 if piece.piece_type == "pa" && piece.number_of_moves > 1
+      # score += 7 if piece.piece_type == "pa"
+      score += 4 if piece.piece_type == "pa" && @chess_game.turn_number > 15
       score -= @score_sheet[class_to_sym(piece)] if opponent_tiles.include?(location)
+      # score -= 10 if opponent_tiles.include?(location)
+
       score += @score_sheet[class_to_sym(tile_content)] unless tile_content.nil? 
       score += 10 if can_catch_king_next_move?(piece, location, opponent_king_location) && !opponent_tiles.include?(location)
       [piece, location, score]

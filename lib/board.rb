@@ -139,8 +139,9 @@ class Board
 
   def kill_opponent_piece(chosen_piece, location)
     player = chosen_piece.player_number == 1 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
+    opponent_piece = @board_with_object[location[0]][location[1]]
 
-    if opponent_piece = @board_with_object[location[0]][location[1]]
+    if opponent_piece  && opponent_piece != chosen_piece
       opponent_piece.dead = true
       @last_four_moves[-1][1] = ["         and captured #{player}'s \e[34m#{opponent_piece.class}\e[0m"]
       @player_one.check_for_dead_pieces

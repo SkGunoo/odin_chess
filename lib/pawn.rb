@@ -73,4 +73,16 @@ class Pawn < ChessPiece
     end
     answer - 1
   end
+
+  def possible_pawn_catchable_places()
+    places = []
+    
+    offsets = @player_number.zero? ? [[-1,-1],[-1,1]] : [[1,-1],[1, 1]]
+    offsets.each do |offset|
+      row = @current_location[0] + offset[0]
+      column = @current_location[1]+ offset[1]
+      places << [self,[row , column]] if valid_location?([row, column]) 
+    end
+    places
+  end
 end

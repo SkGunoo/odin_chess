@@ -10,7 +10,7 @@ require 'yaml'
 
 class ChessGame 
 
-  attr_accessor :turn_number,:winchecker
+  attr_accessor :turn_number, :winchecker
   attr_reader :illegal_move 
   def initialize
     @game_over = false
@@ -42,7 +42,7 @@ class ChessGame
       ask_player_to_make_a_move(@current_player)
       update_after_a_move()
       @game_over = @winchecker.checkmate_check(@current_player) if @current_player.check
-      @game_over = @winchecker.stalemate_check(@current_player)
+      @game_over = @winchecker.stalemate_check(@current_player, @turn_number)
       save_game
     end
   end
@@ -290,7 +290,7 @@ class ChessGame
         @board.players[1] = player 
 
         # ai vs ai test 
-        player_one = @board.player_one = GoodAi.new('Basic Ai 2', 0, @board, self)
+        player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
         @board.player_one.ai = true
         @board.players[0] = player_one 
         @current_player = player_one
