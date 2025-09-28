@@ -18,6 +18,9 @@ class King < ChessPiece
     movable_positions
   end
 
+  private
+
+
   def get_available_location_to_given_direction(direction, object_board)
     location = get_next_direction(@current_location, direction)
     location if valid_location?(location) && !encountered_own_piece?(location, object_board)

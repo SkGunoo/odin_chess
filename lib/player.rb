@@ -101,6 +101,36 @@ class Player
     # end
   end
 
+  ### knight need to match 'n'
+  
+  def promote_pawn(chosen_piece, location)
+    index = @ai == true ? 3 : chosen_piece.pick_piece(@name)
+    class_match = { 'kn' => Knight, 'bi' => Bishop,'ro'=> Rook, 'qu' => Queen}
+
+    # promotes = {Knight => 'kn', Bishop => 'bi', Rook => 'ro', Queen => 'qu'}
+    # promotes = {Knight: 'kn', Bishop: 'bi', Rook: 'ro', Queen: 'qu'}
+    class_type = class_match.values[index]
+    piece_type = class_match.keys[index]
+    chosen_piece.dead = true
+    check_for_dead_pieces
+    @pieces << instance_variable_set("@#{class_type.to_s}",class_type.new( @player_number, piece_type, location)   )
+
+  end
+
+    #updates @nearby_pieces of each piece
+  def update_nearby_chesspieces_for_all_pieces(board)
+    @pieces.each {|piece| piece.update_nearby_chesspieces(board)}
+  end
+  
+  def check_for_dead_pieces
+    @pieces.each do |piece|
+      @dead_pieces << @pieces.delete(piece) if piece.dead
+    end
+  end
+
+  private
+
+
   def setup_initial_pieces(player_number)
     setup_pawns(player_number)
     setup_rest_of_pieces(player_number)
@@ -125,7 +155,7 @@ class Player
       @pieces << instance_variable_set("@#{key.to_s}", class_match[value].new(@player_number,value,[row,index]))
     end
   end
-  ### knight need to match 'n'
+
   def get_positions_of_pieces(type)
     pieces = []
     @pieces.each do |piece|
@@ -134,16 +164,9 @@ class Player
     pieces
   end
 
-  #updates @nearby_pieces of each piece
-  def update_nearby_chesspieces_for_all_pieces(board)
-    @pieces.each {|piece| piece.update_nearby_chesspieces(board)}
-  end
 
-  def check_for_dead_pieces
-    @pieces.each do |piece|
-      @dead_pieces << @pieces.delete(piece) if piece.dead
-    end
-  end
+
+ 
 
   def get_pieces_has_movable_places(board)
     pieces_can_move = @pieces.select do |piece|
@@ -152,17 +175,4 @@ class Player
     pieces_can_move
   end
 
-  def promote_pawn(chosen_piece, location)
-    index = @ai == true ? 3 : chosen_piece.pick_piece(@name)
-    class_match = { 'kn' => Knight, 'bi' => Bishop,'ro'=> Rook, 'qu' => Queen}
-
-    # promotes = {Knight => 'kn', Bishop => 'bi', Rook => 'ro', Queen => 'qu'}
-    # promotes = {Knight: 'kn', Bishop: 'bi', Rook: 'ro', Queen: 'qu'}
-    class_type = class_match.values[index]
-    piece_type = class_match.keys[index]
-    chosen_piece.dead = true
-    check_for_dead_pieces
-    @pieces << instance_variable_set("@#{class_type.to_s}",class_type.new( @player_number, piece_type, location)   )
-
-  end
 end

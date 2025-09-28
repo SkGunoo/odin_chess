@@ -24,15 +24,6 @@ class Castling
     
   end
 
-
-  def get_rook_location(input_location, rook_location, player)
-    locations = @locations[player.player_number]
-    rook_locations = rook_location[player.player_number]
-    return unless locations.include?(input_location) 
-    locations[0] == input_location ? rook_locations[0] : rook_locations[1]
-  end
-
-
   def castling_positions(chosen_piece)
     castling_info = get_castling_info(chosen_piece)
     if castling_info[0] 
@@ -42,6 +33,16 @@ class Castling
     end
     
   end
+
+  private 
+  
+  def get_rook_location(input_location, rook_location, player)
+    locations = @locations[player.player_number]
+    rook_locations = rook_location[player.player_number]
+    return unless locations.include?(input_location) 
+    locations[0] == input_location ? rook_locations[0] : rook_locations[1]
+  end
+
 
   def get_castling_locations(castling_info, chosen_piece)
     player = @board.players[chosen_piece.player_number]

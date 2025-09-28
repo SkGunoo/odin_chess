@@ -17,23 +17,22 @@ class EnPassant
     
   end
   
+  def en_passant_positions(chosen_piece)
+    player_number = chosen_piece.player_number
+    return [] unless chosen_piece.can_en_passant == true
+
+    pawns_can_get_en_passant = check_left_right_for_pawn(chosen_piece)
+    get_positions_to_en_passant(pawns_can_get_en_passant, player_number)
+    
+  end
+
+
   def update_can_get_en_passant(turn_number)
     all_pawns = get_all_pawns
     all_pawns&.each { |pawn| can_get_en_passant_check(pawn, turn_number)}
 
   end
-
-  def can_get_en_passant_check(pawn, turn_number)
-    history = pawn.location_history
-
-    if history.size == 2 && (history[0][0] - history[1][0]).abs == 2 && pawn.first_moved_turn.nil?
-      pawn.can_get_en_passant = true
-      pawn.first_moved_turn = turn_number
-    else
-      pawn.can_get_en_passant = false
-    end 
-  end
-
+  
   def update_can_en_passant
     all_pawns = get_all_pawns
     all_pawns&.each do |pawn|
@@ -47,21 +46,28 @@ class EnPassant
     end
   end
 
+  def can_get_en_passant_check(pawn, turn_number)
+    history = pawn.location_history
+
+    if history.size == 2 && (history[0][0] - history[1][0]).abs == 2 && pawn.first_moved_turn.nil?
+      pawn.can_get_en_passant = true
+      pawn.first_moved_turn = turn_number
+    else
+      pawn.can_get_en_passant = false
+    end 
+  end
+
+  
+
+  private
+
   def get_all_pawns 
     pieces = @board.player_one.pieces + @board.player_two.pieces
     all_the_pawns = pieces.select {|piece| piece.piece_type == 'pa'}
     all_the_pawns
   end
 
-  def en_passant_positions(chosen_piece)
-    player_number = chosen_piece.player_number
-    return [] unless chosen_piece.can_en_passant == true
-
-    pawns_can_get_en_passant = check_left_right_for_pawn(chosen_piece)
-    get_positions_to_en_passant(pawns_can_get_en_passant, player_number)
-    
-  end
-
+  
   def check_left_right_for_pawn(chosen_piece)
     left_right_pieces = [chosen_piece.nearby_pieces[1], chosen_piece.nearby_pieces[2]]
     result = left_right_pieces.select { |piece| piece&.piece_type == 'pa' && piece.can_get_en_passant == true && piece.player_number != chosen_piece.player_number}

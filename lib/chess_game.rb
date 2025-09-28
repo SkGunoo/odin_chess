@@ -25,13 +25,7 @@ class ChessGame
     
   end
 
-  # def illegal_move
-  #   @illegal_move ||= IllegalMove.new(@board, @current_player)
-  # end
-
-  # def winchecker
-  #   @winchecker ||= Winchecker.new(@board, @current_player, @illegal_move)
-  # end
+  
   def play_game
     welcome_message
     load_game? if File.exist?('chess_game.yml')
@@ -43,9 +37,10 @@ class ChessGame
       update_after_a_move()
       @game_over = @winchecker.checkmate_check(@current_player) if @current_player.check
       @game_over = @winchecker.stalemate_check(@current_player, @turn_number)
-      save_game
     end
   end
+
+  private
 
   def load_game? 
 
@@ -103,7 +98,9 @@ class ChessGame
   end
 
   def welcome_message
-    
+    puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Welcome to Chess!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+    puts "Please, read the instructions properly!"
+    puts "Thank you for playting and good luck! \n\n\n"
   end
 
   def ask_player_to_make_a_move(current_player)

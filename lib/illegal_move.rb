@@ -7,7 +7,7 @@ class IllegalMove
     @current_player = current_player
   end
 
-
+  
   def illegal_move?(chosen_piece, location)
     if illegal_move_checker(chosen_piece, location)   
       @board.display_board

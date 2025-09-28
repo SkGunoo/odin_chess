@@ -24,6 +24,38 @@ class Pawn < ChessPiece
     # [[6, 0],[4,0],[5,0]]
   end
 
+  
+
+  def pick_piece(name)
+    vaild_answers = [1,2,3,4]
+    answer = nil
+    until vaild_answers.include?(answer)
+      puts "\e[33m #{name} \e[0m your pawn reached the end, pick piece to promote your pawn."
+      puts "1: Knight, 2: Bishop, 3: Rook, 4: Queen "
+      answer = gets.chomp.to_i
+    end
+    answer - 1
+  end
+
+  def possible_pawn_catchable_places()
+    places = []
+    
+    offsets = @player_number.zero? ? [[-1,-1],[-1,1]] : [[1,-1],[1, 1]]
+    offsets.each do |offset|
+      row = @current_location[0] + offset[0]
+      column = @current_location[1]+ offset[1]
+      places << [self,[row , column]] if valid_location?([row, column]) 
+    end
+    places
+  end
+  
+  def reached_end?(location)
+    end_location = @player_number == 0 ? 0 : 7
+    true if location[0] == end_location
+  end
+
+  private 
+
   def forward_locations(board)
     location = @current_location
     second_tile = [location[0] + switch_direction_depends_on_player(2),location[1]]
@@ -58,31 +90,6 @@ class Pawn < ChessPiece
   end
 
 
-  def reached_end?(location)
-    end_location = @player_number == 0 ? 0 : 7
-    true if location[0] == end_location
-  end
+  
 
-  def pick_piece(name)
-    vaild_answers = [1,2,3,4]
-    answer = nil
-    until vaild_answers.include?(answer)
-      puts "\e[33m #{name} \e[0m your pawn reached the end, pick piece to promote your pawn."
-      puts "1: Knight, 2: Bishop, 3: Rook, 4: Queen "
-      answer = gets.chomp.to_i
-    end
-    answer - 1
-  end
-
-  def possible_pawn_catchable_places()
-    places = []
-    
-    offsets = @player_number.zero? ? [[-1,-1],[-1,1]] : [[1,-1],[1, 1]]
-    offsets.each do |offset|
-      row = @current_location[0] + offset[0]
-      column = @current_location[1]+ offset[1]
-      places << [self,[row , column]] if valid_location?([row, column]) 
-    end
-    places
-  end
 end

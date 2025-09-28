@@ -29,33 +29,7 @@ class Winchecker
     end
   end
 
-  def king_escape_simulation(king, location)
-    board_copy = Marshal.load(Marshal.dump(@board))
-    copied_chosen_piece = @illegal_move.find_the_same_piece_from_copy(king, board_copy)
-    board_copy.move_piece_for_testing(copied_chosen_piece, location)
-    current_player = board_copy.players[king.player_number]
-    winchecker = Winchecker.new(board_copy, current_player, self)
-    # winchcker.checked requires updated board
-    board_copy.update_board
-    winchecker.checked?(current_player)
-  end
-
-
-
-  def get_all_possible_locations_from_all_pieces(player)
-    locations = []
-    player.pieces.each do |piece|
-      locations += piece.get_movable_positions(@board)
-    end
-    locations
-  end
   
-  def get_king(player)
-    king = player.pieces.select do |piece|
-      piece.piece_type == 'ki'
-    end
-    king[0]
-  end
 
   def update_check_status(player)
     if checked?(player)
@@ -65,17 +39,6 @@ class Winchecker
     end 
   end
 
-  
-
-  def get_king_location(player)
-    king = player.pieces.select do |piece|
-      piece.piece_type == 'ki'
-    end
-    king[0].current_location
-  end
-
-  
-
   def opponent_player(player)
     player == @board.player_one ? @board.player_two : @board.player_one
   end
@@ -84,14 +47,7 @@ class Winchecker
     @current_player == @board.player_one ? @board.player_two : @board.player_one
   end
 
-  def back_up_to_original(board_backup)
-      @board.player_one.pieces = board_backup.player_one.pieces
-      @board.player_two.pieces = board_backup.player_two.pieces
-      # @board = board_backup
-      @board.update_board
-      update_check_status(@board.player_one)
-      update_check_status(@board.player_two)
-  end
+
 
   def checkmate_check(player)
     # king_cannot_escape_check?(player) &&
@@ -106,10 +62,73 @@ class Winchecker
     end
   end
 
+
+  def get_king_location(player)
+    king = player.pieces.select do |piece|
+      piece.piece_type == 'ki'
+    end
+    king[0].current_location
+  end
+
+  
+
+  
+
+  def stalemate_check(player, turns)
+    return if player.check
+    moves = get_all_possible_moves_of_all_pieces_for_king(player)
+    if stalemate?(moves) || over_100_turns?(turns)
+      puts "game is stalemate"
+      exit
+    end
+    
+  end
+
+  
+  private
+
+  def get_king(player)
+    king = player.pieces.select do |piece|
+      piece.piece_type == 'ki'
+    end
+    king[0]
+  end
+
+  def get_all_possible_locations_from_all_pieces(player)
+    locations = []
+    player.pieces.each do |piece|
+      locations += piece.get_movable_positions(@board)
+    end
+    locations
+  end
+
+  def king_escape_simulation(king, location)
+    board_copy = Marshal.load(Marshal.dump(@board))
+    copied_chosen_piece = @illegal_move.find_the_same_piece_from_copy(king, board_copy)
+    board_copy.move_piece_for_testing(copied_chosen_piece, location)
+    current_player = board_copy.players[king.player_number]
+    winchecker = Winchecker.new(board_copy, current_player, self)
+    # winchcker.checked requires updated board
+    board_copy.update_board
+    winchecker.checked?(current_player)
+  end
+
   def can_anyone_save_king?(player)
     get_all_the_moves = get_all_possible_moves_of_all_pieces_for_king(player)
     return get_all_the_moves.size.zero?
     get_all_the_moves.all? do |move|
+      piece = move[0]
+      location = move[1]
+      @illegal_move.illegal_move_checker(piece, location)
+    end
+  end
+
+  def over_100_turns?(turns)
+    turns > 100
+  end
+
+  def stalemate?(moves)
+    moves.all? do |move|
       piece = move[0]
       location = move[1]
       @illegal_move.illegal_move_checker(piece, location)
@@ -124,28 +143,6 @@ class Winchecker
       piece_moves[1..-1].each {|move| moves << [piece, move] }
     end
     moves
-  end
-
-  def stalemate_check(player, turns)
-    return if player.check
-    moves = get_all_possible_moves_of_all_pieces_for_king(player)
-    if stalemate?(moves) || over_100_turns?()
-      puts "game is stalemate"
-      exit
-    end
-    
-  end
-
-  def over_100_turns?(turns)
-    turns > 100
-  end
-
-  def stalemate?(moves)
-    moves.all? do |move|
-      piece = move[0]
-      location = move[1]
-      @illegal_move.illegal_move_checker(piece, location)
-    end
   end
 
 end

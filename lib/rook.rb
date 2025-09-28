@@ -13,6 +13,8 @@ class Rook < ChessPiece
     movable_positions
   end
 
+  private
+
   def get_available_locations_to_given_direction(direction, object_board)
     locations = []
     next_position = get_next_direction(@current_location, direction)

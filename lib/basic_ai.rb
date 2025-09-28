@@ -21,11 +21,13 @@ class BasicAi < Player
     ai_thinking_message
     get_all_possible_moves_of_all_pieces
     num_of_moves = @all_the_possible_moves.size - 1
-    @chess_game.winchecker.stalemate_check(self) 
+    @chess_game.winchecker.stalemate_check(self, @chess_game.turn_number) 
     @chess_game.winchecker.checkmate_check(self) if num_of_moves <= 0 && @check
     random_number = rand(0..num_of_moves)
     random_move = @all_the_possible_moves[random_number]
   end
+
+  private
 
   def ai_thinking_message
     puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"

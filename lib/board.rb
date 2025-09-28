@@ -30,6 +30,36 @@ class Board
 
   end
 
+  def update_board
+    # clear_the_board(@board)
+    update_board_with_object()
+    update_chess_piece_locations()
+    
+    @player_one.update_nearby_chesspieces_for_all_pieces(@board_with_object)
+    @player_two.update_nearby_chesspieces_for_all_pieces(@board_with_object)
+  end
+  
+  def move_piece(chosen_piece, location, turn_number = 0)
+    @last_four_moves << add_move_history(chosen_piece, location, turn_number)
+    chosen_piece.location_history << location
+    kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
+    chosen_piece.moved = true
+    
+  end
+
+  def move_piece_for_testing(chosen_piece, location)
+    chosen_piece.location_history << location
+    kill_opponent_piece(chosen_piece, location)
+    chosen_piece.current_location = location
+    chosen_piece.number_of_moves += 1
+  end
+
+
+
+  private 
+
   def draw_row(row, index, hightlights)
     alternate_tile =[[1,3,5,7],[0,2,4,6]]
     index.even? ? get_row(row,index,alternate_tile[0],hightlights): get_row(row,index,alternate_tile[1],hightlights)
@@ -93,15 +123,7 @@ class Board
     "#{colours[colour]}#{text}#{reset}"
   end
 
-  def update_board
-    # clear_the_board(@board)
-    update_board_with_object()
-    update_chess_piece_locations()
-    
-    @player_one.update_nearby_chesspieces_for_all_pieces(@board_with_object)
-    @player_two.update_nearby_chesspieces_for_all_pieces(@board_with_object)
-  end
-
+  
   def clear_the_board(selected_board)
     selected_board.each {|row| row.fill(nil)}
   end
@@ -160,23 +182,7 @@ class Board
 
     #move the given piece to specific location
 
-  def move_piece(chosen_piece, location, turn_number = 0)
-    @last_four_moves << add_move_history(chosen_piece, location, turn_number)
-    chosen_piece.location_history << location
-    kill_opponent_piece(chosen_piece, location)
-    chosen_piece.current_location = location
-    chosen_piece.number_of_moves += 1
-    chosen_piece.moved = true
-    
-  end
-
-  def move_piece_for_testing(chosen_piece, location)
-    chosen_piece.location_history << location
-    kill_opponent_piece(chosen_piece, location)
-    chosen_piece.current_location = location
-    chosen_piece.number_of_moves += 1
-  end
-
+  
   def add_move_history(chosen_piece, location, turn_number)
     @last_four_moves.clear if turn_number == 1
     current_location = chosen_piece.convert_array_index_to_chess_location(chosen_piece.current_location)
@@ -189,17 +195,3 @@ class Board
 end
 
 
-# def print_top_row
-  #   numbers = (1..8).to_a.map {|num| "#{num.to_s.center(4)}"}
-  #   puts "\n   " + numbers.join("")
-  #   seperator = "  🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n"
-  #   puts seperator
-  # end
-
-  # def print_bottom_row
-  #   numbers = (1..8).to_a.map {|num| "#{num.to_s.center(4)}"}
-  #   seperator = "  🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹\n"
-  #   puts seperator
-  #   puts "   " + numbers.join("") 
-  #   puts " "
-  # end

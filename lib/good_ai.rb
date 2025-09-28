@@ -4,8 +4,6 @@ class GoodAi < Player
     super(name, player_number, board,chess_game)
     @all_the_possible_moves = []
     @score_sheet = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1}
-    @score_sheet_two = {Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1}
-
   end
 
 
@@ -19,19 +17,10 @@ class GoodAi < Player
     @chess_game.winchecker.checkmate_check(self) if num_of_moves <= 0 && @check
     scored_moves = score_moves_with_points.sort_by {|moves| -moves[2]}
     pick_one_moves_from_highest_socred_moves(scored_moves)
-    # if scored_moves[0][2] == 10
-    #   picked_move = scored_moves[0]
-    #   picked_move_without_socre = picked_move[0..1]
-    # else
-    #   highest_socre = scored_moves[0][2]
-    #   high_scored_moves = scored_moves.select {|move| move[2] == highest_socre}
-    #   random_number = rand(0..high_scored_moves.size - 1)
-    #   picked_move =  high_scored_moves[random_number]
-    #   picked_move_without_socre = picked_move[0..1]
-      
-    # end
     
   end
+
+  private
 
   def pick_one_moves_from_highest_socred_moves(scored_moves)
     highest_socre = scored_moves[0][2]
