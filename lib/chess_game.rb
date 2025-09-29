@@ -99,7 +99,7 @@ class ChessGame
   end
 
   def welcome_message
-    puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Welcome to Chess!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+    puts "\n\n\n\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Welcome to Chess!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
     puts 'Please, read the instructions properly!'
     puts "Thank you for playting and good luck! \n\n\n"
   end
@@ -292,14 +292,14 @@ class ChessGame
     when 1
       nil
     when 2
-      player = @board.player_two = BasicAi.new('Basic Ai', 1, @board, self)
+      player = @board.player_two = BasicAi.new('Dumb Ai', 1, @board, self)
       @board.player_two.ai = true
       # players need to be updated
       # without the update its still player_two
       @board.players[1] = player
 
     when 3
-      player = @board.player_two = GoodAi.new('Good Ai', 1, @board, self)
+      player = @board.player_two = GoodAi.new('O-kay Ai', 1, @board, self)
       @board.player_two.ai = true
       # players need to be updated
       # without the update its still player_two
@@ -307,10 +307,10 @@ class ChessGame
 
       # ai vs ai test
       # uncomment lines below if you want to test ai vs ai
-      player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
-      @board.player_one.ai = true
-      @board.players[0] = player_one
-      @current_player = player_one
+      # player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
+      # @board.player_one.ai = true
+      # @board.players[0] = player_one
+      # @current_player = player_one
 
     end
   end
@@ -320,7 +320,7 @@ class ChessGame
     game_mode = nil
     until game_mode
       puts '🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹'
-      puts '-Choose game mode : 1.vs player | 2. vs Bad AI | 3. vs Basic AI '
+      puts "-Choose game mode : \e[33m1.vs player\e[0m | \e[34m2. play vs Dumb AI\e[0m | \e[35m3. play vs O-kay AI\e[0m "
       puts '--Type a number the press enter'
       answer = gets.chomp.to_i
       game_mode = answer if valid_answer.include?(answer)

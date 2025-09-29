@@ -22,11 +22,32 @@ class GoodAi < Player
 
   def ai_thinking_message
     puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-    puts 'Good Ai is thinking........'.rjust(10)
+    puts "#{pick_ai_thinking_messages}"
     puts '🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹'
     sleep(2)
   end
 
+  def pick_ai_thinking_messages
+    messages = [
+      'O-kay Ai is thinking about dinner ........',
+      'O-kay Ai is thinking about cats ........',
+      'O-kay Ai is thinking about you ........',
+      'O-kay Ai is thinking about lunch ........',
+      'O-kay Ai is pretending to think ........',
+      'O-kay Ai is counting sheep ........',
+      'O-kay Ai is thinking about pizza ........',
+      'O-kay Ai forgot what it was thinking ........',
+      'O-kay Ai is thinking about tomorrow ........',
+      'O-kay Ai is daydreaming ........',
+      'O-kay Ai is thinking really hard ........',
+      'O-kay Ai is thinking about chess... wait, what? ........',
+      'O-kay Ai is wondering if this is a good move ........',
+      'O-kay Ai is thinking about breakfast ........',
+      'O-kay Ai is lost in thought ........'
+    ]
+    random_number = rand((messages.size) -1)
+    messages[random_number]
+  end
   
   def get_all_possible_moves_of_all_pieces(pieces, moves = [], user_flag = 0)
     pieces.each do |piece|
