@@ -5,6 +5,7 @@ class GoodAi < Player
     @score_sheet = { Knight: 3, Rook: 5, Queen: 9, Bishop: 3, Pawn: 1, King: 1 }
   end
 
+  # main method picking the ai move
   def pick_one_move
     ai_thinking_message
     @all_the_possible_moves.clear
@@ -19,14 +20,14 @@ class GoodAi < Player
 
   private
 
-  def pick_one_moves_from_highest_socred_moves(scored_moves)
-    highest_socre = scored_moves[0][2]
-    high_scored_moves = scored_moves.select { |move| move[2] == highest_socre }
-    random_number = rand(0..high_scored_moves.size - 1)
-    picked_move = high_scored_moves[random_number]
-    picked_move[0..1]
+  def ai_thinking_message
+    puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
+    puts 'Good Ai is thinking........'.rjust(10)
+    puts '🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹'
+    sleep(2)
   end
 
+  
   def get_all_possible_moves_of_all_pieces(pieces, moves = [], user_flag = 0)
     pieces.each do |piece|
       process_moves(piece, moves, user_flag)
@@ -34,6 +35,10 @@ class GoodAi < Player
     moves
   end
 
+  # get movable places of each piece. 
+  # if user flag is 0 it doesn't process the first index of the moves
+  # which is its current location. flag need to raised when getting 
+  # all the opponent moves
   def process_moves(piece, moves, user_flag)
     piece_moves = piece.get_movable_positions(@board)
     return if piece_moves.size < 2
@@ -49,11 +54,13 @@ class GoodAi < Player
     end
   end
 
+  # after getting all the available moves, score them by giving them points
   def score_moves_with_points
     opponent = @chess_game.winchecker.opponent_player(self)
     opponent_moves = get_all_possible_moves_of_all_pieces(opponent.pieces, [], 1)
+    # need to get locations where pawns can catch the piece, so when ai decides
+    # the move it can avoid those places
     opponent_moves += get_pawns_possible_catchable_places(opponent.pieces)
-    # p opponent_moves
     tiles_opponent_can_reach = opponent_moves.map { |move| move[1] }
     opponent_king_location = @chess_game.winchecker.get_king_location(opponent)
     score_moves_with_points_part_two(tiles_opponent_can_reach, opponent_king_location)
@@ -68,17 +75,16 @@ class GoodAi < Player
     moves
   end
 
+  # add,subtract scores based pm @scoresheet and additional conditions
   def score_moves_with_points_part_two(opponent_tiles, opponent_king_location)
     @all_the_possible_moves.map do |move|
       score = 0
       piece = move[0]
       location = move[1]
       tile_content = @board.board_with_object[location[0]][location[1]]
-      # score += 7 if piece.piece_type == "pa"
+      # give points to pawns so it eventually moves to the end and get promoted
       score += 4 if piece.piece_type == 'pa' && @chess_game.turn_number > 15
       score -= @score_sheet[class_to_sym(piece)] if opponent_tiles.include?(location)
-      # score -= 10 if opponent_tiles.include?(location)
-
       score += @score_sheet[class_to_sym(tile_content)] unless tile_content.nil?
       score += 10 if can_catch_king_next_move?(piece, location,
                                                opponent_king_location) && !opponent_tiles.include?(location)
@@ -102,10 +108,12 @@ class GoodAi < Player
     chess_piece.class.to_s.to_sym
   end
 
-  def ai_thinking_message
-    puts "\n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
-    puts 'Good Ai is thinking........'.rjust(10)
-    puts '🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹'
-    sleep(2)
+  def pick_one_moves_from_highest_socred_moves(scored_moves)
+    highest_socre = scored_moves[0][2]
+    high_scored_moves = scored_moves.select { |move| move[2] == highest_socre }
+    random_number = rand(0..high_scored_moves.size - 1)
+    picked_move = high_scored_moves[random_number]
+    picked_move[0..1]
   end
+  
 end

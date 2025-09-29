@@ -5,6 +5,7 @@ class Board
   attr_accessor :board, :board_with_object, :player_one, :player_two, :players, :last_four_moves
 
   def initialize(chess_game)
+    # this board is what is shown in terminal
     @board = Array.new(8) { Array.new(8) }
     @chess_game = chess_game
     # this is where chesspiece objects go
@@ -13,6 +14,7 @@ class Board
     @player_one = Player.new('Player One', 0, self, @chess_game)
     @player_two = Player.new('Player Two', 1, self, @chess_game)
     @players = [@player_one, @player_two]
+    # this used for displaying last 4 moves next to board
     @last_four_moves = [[[], []], [[], []], [[], []], [[], []]]
   end
 
@@ -27,8 +29,8 @@ class Board
     print_column_numbers('bottom')
   end
 
+  # updates array contents of @board and @board with objects
   def update_board
-    # clear_the_board(@board)
     update_board_with_object
     update_chess_piece_locations
 
@@ -36,21 +38,29 @@ class Board
     @player_two.update_nearby_chesspieces_for_all_pieces(@board_with_object)
   end
 
+   
   def move_piece(chosen_piece, location, turn_number = 0)
     @last_four_moves << add_move_history(chosen_piece, location, turn_number)
     chosen_piece.location_history << location
+    # checks if opponent piece is at the 'location'
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
     chosen_piece.number_of_moves += 1
     chosen_piece.moved = true
   end
 
+  # used when simulating a chess move in other classes
   def move_piece_for_testing(chosen_piece, location)
     chosen_piece.location_history << location
     kill_opponent_piece(chosen_piece, location)
     chosen_piece.current_location = location
     chosen_piece.number_of_moves += 1
   end
+
+  def display_hlighlited_locations(locations, _chosen_piece)
+    display_board(locations)
+  end
+
 
   private
 
@@ -75,10 +85,11 @@ class Board
         "#{edited_tile}"
       end
     end
-    "   #{8 - index} |#{tile_sction.join('|')}| #{8 - index}       #{test_addiontal(index)}\n"
+    "   #{8 - index} |#{tile_sction.join('|')}| #{8 - index}       #{previous_move_board(index)}\n"
   end
 
-  def test_addiontal(row)
+  # there is definetley a better way to do this
+  def previous_move_board(row)
     case row
     when 0
       @last_four_moves.reverse[0][0]&.join
@@ -108,7 +119,6 @@ class Board
     puts_order.each { |index| puts elements[index] }
   end
 
-  # colour has to be symbol
   def background_colour(colour, text)
     colours = {
       green: "\e[42m",
@@ -149,10 +159,13 @@ class Board
     end
   end
 
+  # check if given tile need to be highlighted
   def highlight_check(row, column, highlights)
     highlights.any? { |location| location == [row, column] }
   end
 
+  # set @dead for dead piece and updates previous move board
+  # with the captured message 
   def kill_opponent_piece(chosen_piece, location)
     player = chosen_piece.player_number == 1 ? "\e[33mplayer 1\e[0m" : "\e[32mplayer 2\e[0m"
     opponent_piece = @board_with_object[location[0]][location[1]]
@@ -164,23 +177,15 @@ class Board
     @player_one.check_for_dead_pieces
     @player_two.check_for_dead_pieces
 
-    # chosen_piece.current_location = location
   end
 
-  def display_hlighlited_locations(locations, _chosen_piece)
-    display_board(locations)
-    # puts "Type\e[33m'g'\e[0m if you want to go back and choose another piece to move  \n"
-    # puts "\nyou can move the piece \e[33m#{chosen_piece.symbol}\e[0m to highlighted tiles"
-    # puts "type the location(example: a4, d4) then press enter"
-  end
-
-  # move the given piece to specific location
-
+  
+  # updates previous move board after each move
   def add_move_history(chosen_piece, location, turn_number)
     @last_four_moves.clear if turn_number == 1
     current_location = chosen_piece.convert_array_index_to_chess_location(chosen_piece.current_location)
     moving_location = chosen_piece.convert_array_index_to_chess_location(location)
-    player = chosen_piece.player_number == 0 ? "\e[33mplayer 1\e[0m" : "\e[32m#{players[1].name}\e[0m"
+    player = chosen_piece.player_number == 0 ? "\e[33m#{players[0].name}\e[0m" : "\e[32m#{players[1].name}\e[0m"
     [
       ["\e[31mTurn ##{turn_number}:\e[0m #{player} moved \e[34m#{chosen_piece.class}\e[0m from #{current_location} to #{moving_location}"], []
     ]

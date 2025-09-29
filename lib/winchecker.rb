@@ -5,7 +5,7 @@ class Winchecker
     @illegal_move = illegal_move
   end
 
-  # this check if given play's king is checked
+  # this check if given player's king is checked
   def checked?(player)
     opponent = opponent_player(player)
     king_location = get_king_location(player)
@@ -16,14 +16,13 @@ class Winchecker
     end
   end
 
+  # if this is true then it means king cannot escape check by its own
   def king_cannot_escape_check?(player)
     king = get_king(player)
     king_movable_locations = king.get_movable_positions(@board)
-    # board_backup = Marshal.load(Marshal.dump(@board))
     get_all_possible_locations_from_all_pieces(opponent_player(player))
     king_movable_locations[1..-1].all? do |location|
       king_escape_simulation(king, location)
-      # locations_opponent_can_reach.include?(location)
     end
   end
 
@@ -40,7 +39,6 @@ class Winchecker
   end
 
   def checkmate_check(player)
-    # king_cannot_escape_check?(player) &&
     if king_cannot_escape_check?(player) && !can_anyone_save_king?(player)
       opponent = opponent_player(player)
       @board.display_board
@@ -63,7 +61,7 @@ class Winchecker
     return if player.check
 
     moves = get_all_possible_moves_of_all_pieces_for_king(player)
-    return unless stalemate?(moves) || over_100_turns?(turns)
+    return unless stalemate?(moves) || over_150_turns?(turns)
 
     puts 'game is stalemate'
     exit
@@ -86,6 +84,7 @@ class Winchecker
     locations
   end
 
+  #checking if king is checked if it moved to given location
   def king_escape_simulation(king, location)
     board_copy = Marshal.load(Marshal.dump(@board))
     copied_chosen_piece = @illegal_move.find_the_same_piece_from_copy(king, board_copy)
@@ -99,7 +98,7 @@ class Winchecker
 
   def can_anyone_save_king?(player)
     get_all_the_moves = get_all_possible_moves_of_all_pieces_for_king(player)
-    return get_all_the_moves.size.zero?
+    return if get_all_the_moves.size.zero?
     get_all_the_moves.all? do |move|
       piece = move[0]
       location = move[1]
@@ -107,8 +106,8 @@ class Winchecker
     end
   end
 
-  def over_100_turns?(turns)
-    turns > 100
+  def over_150_turns?(turns)
+    turns > 150
   end
 
   def stalemate?(moves)

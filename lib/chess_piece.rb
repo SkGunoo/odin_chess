@@ -17,6 +17,7 @@ class ChessPiece
     @piece_type = piece_type
     @symbol = get_symbol(player_number, piece_type)
     @current_location = current_location
+    # @location_history is used for debugging
     @location_history = [@current_location]
     @number_of_moves = 0
     @dead = false
@@ -56,6 +57,8 @@ class ChessPiece
     [convert_row[chess_location[1].to_i], convert[chess_location[0]]]
   end
 
+  # updates @nearby_pieces instance variable in chesspiece class
+  # @nearby_pieces is used for pawn class
   def update_nearby_chesspieces(board)
     # clear the array so we can update it fresh
     @nearby_pieces.clear

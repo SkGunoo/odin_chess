@@ -10,6 +10,8 @@ class Castling
     @rook_moving_location = [[[7, 5], [7, 3]], [[0, 5], [0, 3]]]
   end
 
+  # check if king moved using calstling and move the accompanying rook
+  # to castling location
   def castling_check(chosen_piece, input_location)
     player = @board.players[chosen_piece.player_number]
     rook_location = get_rook_location(input_location, @rook_location, player)
@@ -21,6 +23,7 @@ class Castling
     @board.last_four_moves[-1][1] = ["#{player.name} used castling"]
   end
 
+  # check if king meets right conditions for castling
   def castling_positions(chosen_piece)
     castling_info = get_castling_info(chosen_piece)
     if castling_info[0]
@@ -39,7 +42,7 @@ class Castling
 
     locations[0] == input_location ? rook_locations[0] : rook_locations[1]
   end
-
+  
   def get_castling_locations(castling_info, chosen_piece)
     player = @board.players[chosen_piece.player_number]
     current_player_index = player.player_number
@@ -82,6 +85,8 @@ class Castling
     end
   end
 
+  # this check on of the castling condition.
+  # cannot castle if opponent can reach empty tiles between king and rook
   def empty_space_reachable(player)
     locations = player.player_number == 0 ? @player_one : @player_two
     tiles_opponent_can_reach = get_all_the_reachable_places(player)
@@ -90,6 +95,7 @@ class Castling
     [left_side, right_side]
   end
 
+  #check tiles opponent can reach
   def get_all_the_reachable_places(player)
     opponent = @winchcker.opponent_player(player)
     tiles_can_reach = []
@@ -106,6 +112,7 @@ class Castling
     [left_side, right_side]
   end
 
+  #check if player's rooks have moved
   def rook_move_check(chosen_piece)
     all_of_rooks_places = [[[7, 7], [7, 0]], [[0, 7], [0, 0]]]
     current_player_rooks = all_of_rooks_places[chosen_piece.player_number]

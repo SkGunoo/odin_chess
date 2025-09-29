@@ -24,6 +24,7 @@ class ChessGame
     @game_loaded = false
   end
 
+  #basic game loop
   def play_game
     welcome_message
     load_game? if File.exist?('chess_game.yml')
@@ -41,15 +42,15 @@ class ChessGame
   private
 
   def load_game?
-    done = false
-    until done
+    answered = false
+    until answered
       puts "🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹 \n \e[33m      -Saved game found!-\e[0m \n🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹"
       puts "--Type \e[33m'1'\e[0m then press enter to load \e[32msaved game\e[0m or \n  type \e[33m'2'\e[0m then press enter start a \e[33mnew game\e[0m"
       answer = gets.chomp.to_s
-      done = true if answer == '1'
+      answered = true if answer == '1'
       return false if answer == '2'
     end
-    load_game if done
+    load_game if answered
   end
 
   def save_game(filename = 'chess_game.yml')
@@ -70,6 +71,9 @@ class ChessGame
     exit
   end
 
+  #permitted_classes and aliases property is
+  #required to load all the classes and its
+  #intstnaces properly
   def load_game(filename = 'chess_game.yml')
     return nil unless File.exist?(filename)
 
@@ -100,48 +104,53 @@ class ChessGame
     puts "Thank you for playting and good luck! \n\n\n"
   end
 
+  # main method handles getting a move from player or ai 
   def ask_player_to_make_a_move(current_player)
+    # get a move from ai if current player is ai
     ai_move = current_player.pick_one_move if current_player.ai
     chosen_piece = current_player.ai ? ai_move[0] : nil
     location = current_player.ai ? ai_move[1] : nil
+    
+    # get user input if current_player is not ai
     until chosen_piece && location
       chosen_piece = choose_a_piece(current_player)
       location = get_location_to_move_piece(chosen_piece)
     end
 
+    # if the move puts king in danger ask user again to pick a move
     if @illegal_move.illegal_move?(chosen_piece, location)
       ask_player_to_make_a_move(current_player)
+    # if its a valid move then check various conditions depends on
+    # type of the chesspiece, like en_passant, pawn promotion and castling
     else
       if chosen_piece.piece_type == 'pa' && chosen_piece.reached_end?(location)
-        @current_player.promote_pawn(chosen_piece,
-                                     location)
+        @current_player.promote_pawn(chosen_piece, location)
       end
       @board.move_piece(chosen_piece, location, @turn_number)
       if chosen_piece.piece_type == 'ki' && @current_player.check == false
-        @castling.castling_check(chosen_piece,
-                                 location)
+        @castling.castling_check(chosen_piece, location)
       end
       @en_passant.en_passant_check_after_pawn_move(chosen_piece, location) if chosen_piece.piece_type == 'pa'
     end
   end
 
+
   def choose_a_piece(current_player)
-    # show board again so user can choose the
-    # piece again
-    # @board.display_board
+    # if player is in check, warn user about it
     msg_if_player_is_checked(current_player)
 
     choose_the_type(get_available_types(current_player))
   end
 
-  ### need to prevent presenting the pieces has nowhere to go
+  # prevents user from choosing a piece that has nowhere go to
   def get_available_types(current_player)
     single_letter_to_full = { ki: 'King', qu: 'Queen', kn: 'Knight', bi: 'Bishop', ro: 'Rook', pa: 'Pawn' }
     pieces = current_player.get_pieces_has_movable_places(@board)
-    # pieces = current_player.pieces
     pieces.map { |piece| "#{single_letter_to_full[piece.piece_type.to_sym]}" }.uniq
   end
 
+  # ask user what 'type' of chesspiece they want to move
+  # before choosing a exact piece
   def choose_the_type(available_types)
     array_to_string = available_types.map.with_index { |type, index| "#{index + 1}:#{type}  " }
     puts "\nYou can type \e[33m's'\e[0m and press enter to save the game and exit"
@@ -151,10 +160,10 @@ class ChessGame
     puts '------------------------------------------------'
     puts "---#{array_to_string.join('')}"
     piece_type_user_chose = available_types[get_vailid_answer(available_types)]
-    # piece_type_user_chose[0] = first letter of the piece i.e k, q, b, ect
     choose_actual_piece(piece_type_user_chose.downcase)
   end
 
+  ##refactor
   def get_vailid_answer(available_types)
     valid_answers = (1..available_types.size).to_a
     answer = gets.chomp
@@ -170,9 +179,11 @@ class ChessGame
     answer_converted - 1
   end
 
+  # after user choosing the 'type' of chesspiece
+  # ask them to choose which specific piece of that type they want to move
   def choose_actual_piece(piece_type_user_chose)
     pieces = @current_player.get_positions_of_pieces(piece_type_user_chose[0..1])
-    # this filters the pieces that has no play to go
+    # this filters the pieces that has no places to go prevent users from choosing it
     pieces = pieces.select { |piece| piece.get_movable_positions(@board).size > 1 }
     locations = pieces.map.with_index do |piece, index|
       "#{index + 1}:#{piece.convert_array_index_to_chess_location(piece.current_location)}  "
@@ -190,10 +201,11 @@ class ChessGame
     end
   end
 
+  # after user chose the specific piece they want to move
+  # present them which a board with locations that piece can go highlighted
+  # so the user can choose the exact location they want it to move
   def get_location_to_move_piece(chosen_piece)
     available_locations = get_available_locations(chosen_piece)
-    # when user chose a piece but it has nowhere to go, go back to beginning
-    # piece_has_nowhere_to_go(chosen_piece) if available_locations.empty?
     available_chess_locations = convert_array_locations_to_chess_locations(chosen_piece, available_locations)
     @board.display_hlighlited_locations(available_locations, chosen_piece)
     # puts "which location you want to move \e[33m#{chosen_piece.symbol}\e[0m to?"
@@ -203,6 +215,9 @@ class ChessGame
     chosen_piece.convert_chess_location_to_array_location(user_input)
   end
 
+  # check caslting and en passant availability here
+  # so we can add them to available moves, so user can see 
+  # those options are available
   def get_available_locations(chosen_piece)
     available_locations = chosen_piece.get_movable_positions(@board)
     if chosen_piece.piece_type == 'ki' && @current_player.check == false
@@ -217,19 +232,17 @@ class ChessGame
     array_locations.map { |location| chosen_piece.convert_array_index_to_chess_location(location) }
   end
 
+  # user choose the location to move their chosen piece
+  # if user decide to choose another piece to move they can
+  # type 'g' here to go back to choose 'type' of the chesspiece again
   def get_location_from_user(available_locations)
-    # also need to check if user input is one of the
-    # available moves
-    # answer = gets.chomp
-    # return nil if answer == 'g'
-    # valid_location = location_input_check(answer,available_locations)
     valid_location = nil
     until valid_location
       puts " Type\e[31m'g'\e[0m if you want to go back and choose another piece to move  \n"
       puts '🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹🭹'
       puts "-\e[33m#{@current_player.name}\e[0m you can move the piece you chose to one of the \e[43mhighlighted tiles \e[0m"
       puts '--type a location from highlighted tiles(example: a4, d4) then press enter '
-      answer = gets.chomp
+      answer = gets.chomp.downcase
       if answer == 'g'
         @board.display_board
         return nil
@@ -239,7 +252,7 @@ class ChessGame
     answer
   end
 
-  # checks if user input is correct
+  # checks if user's chess location input is correct
   def location_input_check(location, available_locations)
     columns = ('a'..'h').to_a
     rows = ('1'..'8').to_a
@@ -249,12 +262,12 @@ class ChessGame
     end
   end
 
+  # updates all the necessary instances variables after user made a move
   def update_after_a_move
     @turn_number += 1
     @en_passant.update_can_get_en_passant(@turn_number)
     @en_passant.update_can_en_passant
     @board.update_board
-    # @board.display_board
     @winchecker.update_check_status(@board.player_one)
     @winchecker.update_check_status(@board.player_two)
 
@@ -272,6 +285,7 @@ class ChessGame
     puts 'you must protect your king in this turn!'
   end
 
+  # ask user if they want to play agains other player or ai
   def vs_player_or_ai
     game_mode = get_game_mode_answer
     case game_mode
@@ -292,6 +306,7 @@ class ChessGame
       @board.players[1] = player
 
       # ai vs ai test
+      # uncomment lines below if you want to test ai vs ai
       player_one = @board.player_one = BasicAi.new('Basic Ai 2', 0, @board, self)
       @board.player_one.ai = true
       @board.players[0] = player_one
