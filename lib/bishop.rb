@@ -1,13 +1,12 @@
-require_relative 'chess_piece.rb'
+require_relative 'chess_piece'
 
 class Bishop < ChessPiece
-
   def get_movable_positions(board)
     object_board = board.board_with_object
     movable_positions = [@current_location]
-    offsets = [[-1, -1], [-1, 1],[1, -1],[1, 1]]
+    offsets = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
     offsets.each do |direction|
-      locations = get_available_locations_to_given_direction(direction,object_board)
+      locations = get_available_locations_to_given_direction(direction, object_board)
       movable_positions += locations
     end
     movable_positions
@@ -31,5 +30,4 @@ class Bishop < ChessPiece
     next_column = location[1] + direction[1]
     [next_row, next_column]
   end
-
 end

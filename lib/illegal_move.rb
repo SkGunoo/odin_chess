@@ -1,15 +1,13 @@
-require_relative 'winchecker.rb'
+require_relative 'winchecker'
 
 class IllegalMove
-  
   def initialize(board, current_player)
     @board = board
     @current_player = current_player
   end
 
-  
   def illegal_move?(chosen_piece, location)
-    if illegal_move_checker(chosen_piece, location)   
+    if illegal_move_checker(chosen_piece, location)
       @board.display_board
       puts "\n \e[33m That move puts your King in danger! try different move! \e[0m"
       true
@@ -27,7 +25,6 @@ class IllegalMove
     # winchcker.checked requires updated board
     board_copy.update_board
     winchecker.checked?(current_player)
-
   end
 
   def find_the_same_piece_from_copy(chosen_piece, board_copy)
@@ -35,7 +32,4 @@ class IllegalMove
     copied_object_board = board_copy.board_with_object
     copied_object_board[location[0]][location[1]]
   end
-
-  
-
 end

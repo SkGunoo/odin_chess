@@ -1,15 +1,15 @@
-require_relative 'chess_piece.rb'
+require_relative 'chess_piece'
 
 class Player
-
   attr_accessor :pieces, :name, :dead_pieces, :check, :checkmate, :player_number, :flag, :ai
+
   def initialize(name, player_number, board, chess_game)
     @name = name
     @board = board
     @chess_game = chess_game
     @player_number = player_number
     @pieces = []
-    @dead_pieces =[]
+    @dead_pieces = []
     @check = false
     @checkmate = false
     @ai = false
@@ -18,16 +18,15 @@ class Player
     setup_initial_pieces(player_number)
   end
 
-
   def test_board_setup(player_number)
-    # if player_number == 0 
+    # if player_number == 0
     #   @pieces << instance_variable_set("@pawn1", Pawn.new(@player_number, 'p', [4, 4]))
     # else
     #   @pieces << instance_variable_set("@pawn2", Pawn.new(@player_number, 'p', [3, 5]))
     #   @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
 
     # end
-    # if player_number == 0 
+    # if player_number == 0
     #   @pieces << instance_variable_set("@pawn1", Knight.new(@player_number, 'n', [4, 4]))
     #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'b', [4, 3]))
     #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'b', [3, 3]))
@@ -37,7 +36,7 @@ class Player
     #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'p', [0, 5]))
     # end
 
-    # if player_number == 0 
+    # if player_number == 0
     #   @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [4, 4]))
     #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [3, 2]))
     #   @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [0, 6]))
@@ -45,30 +44,30 @@ class Player
     # else
     #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
     #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
-      
+
     # end
 
-    ########castling set up
-    if player_number == 0 
-      @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [7, 4]))
+    # #######castling set up
+    if player_number == 0
+      @pieces << instance_variable_set('@pawn1', King.new(@player_number, 'ki', [7, 4]))
       # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [7, 7]))
       # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [4, 0]))
       # @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [6, 0]))
 
-      @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 0]))
+      @pieces << instance_variable_set('@pawn4', Queen.new(@player_number, 'qu', [7, 0]))
 
     else
-      @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [1, 1]))
-      @pieces << instance_variable_set("@pawn5", Pawn.new(@player_number, 'pa', [5, 2]))
+      @pieces << instance_variable_set('@pawn2', King.new(@player_number, 'ki', [1, 1]))
+      @pieces << instance_variable_set('@pawn5', Pawn.new(@player_number, 'pa', [5, 2]))
 
       # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
 
       # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
     end
 
-    ##########castling set_up #2
-    # if player_number == 0 
-      
+    # #########castling set_up #2
+    # if player_number == 0
+
     #   @pieces << instance_variable_set("@pawn4", Queen.new(@player_number, 'qu', [7, 5]))
 
     #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [4, 1]))
@@ -76,15 +75,15 @@ class Player
     #   @pieces << instance_variable_set("@pawn1", King.new(@player_number, 'ki', [0, 4]))
     #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 7]))
     #   @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 0]))
-      
+
     #   # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
 
     #   # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
     # end
 
-    ##########pawn en passant test set up
-    # if player_number == 0 
-      
+    # #########pawn en passant test set up
+    # if player_number == 0
+
     #   @pieces << instance_variable_set("@pawn4", Pawn.new(@player_number, 'pa', [1, 2]))
 
     #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [7, 1]))
@@ -92,20 +91,20 @@ class Player
     #   @pieces << instance_variable_set("@pawn1", Pawn.new(@player_number, 'pa', [6, 3]))
     #   @pieces << instance_variable_set("@pawn2", King.new(@player_number, 'ki', [0, 3]))
 
-      # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 7]))
-      # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 0]))
-      
-      # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
+    # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 7]))
+    # @pieces << instance_variable_set("@pawn5", Rook.new(@player_number, 'ro', [0, 0]))
 
-      # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
+    # @pieces << instance_variable_set("@pawn2", Rook.new(@player_number, 'ro', [4, 5]))
+
+    # @pieces << instance_variable_set("@pawn3", Pawn.new(@player_number, 'pa', [0, 2]))
     # end
   end
 
   ### knight need to match 'n'
-  
+
   def promote_pawn(chosen_piece, location)
     index = @ai == true ? 3 : chosen_piece.pick_piece(@name)
-    class_match = { 'kn' => Knight, 'bi' => Bishop,'ro'=> Rook, 'qu' => Queen}
+    class_match = { 'kn' => Knight, 'bi' => Bishop, 'ro' => Rook, 'qu' => Queen }
 
     # promotes = {Knight => 'kn', Bishop => 'bi', Rook => 'ro', Queen => 'qu'}
     # promotes = {Knight: 'kn', Bishop: 'bi', Rook: 'ro', Queen: 'qu'}
@@ -113,15 +112,14 @@ class Player
     piece_type = class_match.keys[index]
     chosen_piece.dead = true
     check_for_dead_pieces
-    @pieces << instance_variable_set("@#{class_type.to_s}",class_type.new( @player_number, piece_type, location)   )
-
+    @pieces << instance_variable_set("@#{class_type}", class_type.new(@player_number, piece_type, location))
   end
 
-    #updates @nearby_pieces of each piece
+  # updates @nearby_pieces of each piece
   def update_nearby_chesspieces_for_all_pieces(board)
-    @pieces.each {|piece| piece.update_nearby_chesspieces(board)}
+    @pieces.each { |piece| piece.update_nearby_chesspieces(board) }
   end
-  
+
   def check_for_dead_pieces
     @pieces.each do |piece|
       @dead_pieces << @pieces.delete(piece) if piece.dead
@@ -129,7 +127,6 @@ class Player
   end
 
   private
-
 
   def setup_initial_pieces(player_number)
     setup_pawns(player_number)
@@ -139,7 +136,6 @@ class Player
   def setup_pawns(player_number)
     row = player_number == 0 ? 6 : 1
     8.times do |num|
-      #
       @pieces << instance_variable_set("@pawn#{num}", Pawn.new(@player_number, 'pa', [row, num]))
 
       # @pieces << instance_variable_set("@pawn#{num}", ChessPiece.new(@player_number, 'p', [row, num]))
@@ -149,10 +145,11 @@ class Player
   def setup_rest_of_pieces(player_number)
     row = player_number == 0 ? 7 : 0
     # set_up_layout = ['r','n','b','k','q','b','n','r']
-    layout = {rook_one:'ro',kinght_one:'kn',bishop_one:'bi',queen:'qu',king:'ki',bishop_two:'bi',kight_two:'kn',rook_two:'ro'}
-    class_match = {'ro'=> Rook, 'kn' => Knight, 'bi' => Bishop, 'ki' => King, 'qu' => Queen}
-    layout.each_with_index do |(key,value),index| 
-      @pieces << instance_variable_set("@#{key.to_s}", class_match[value].new(@player_number,value,[row,index]))
+    layout = { rook_one: 'ro', kinght_one: 'kn', bishop_one: 'bi', queen: 'qu', king: 'ki', bishop_two: 'bi', kight_two: 'kn',
+               rook_two: 'ro' }
+    class_match = { 'ro' => Rook, 'kn' => Knight, 'bi' => Bishop, 'ki' => King, 'qu' => Queen }
+    layout.each_with_index do |(key, value), index|
+      @pieces << instance_variable_set("@#{key}", class_match[value].new(@player_number, value, [row, index]))
     end
   end
 
@@ -164,15 +161,9 @@ class Player
     pieces
   end
 
-
-
- 
-
   def get_pieces_has_movable_places(board)
-    pieces_can_move = @pieces.select do |piece|
+    @pieces.select do |piece|
       piece.get_movable_positions(board).size > 1
     end
-    pieces_can_move
   end
-
 end
