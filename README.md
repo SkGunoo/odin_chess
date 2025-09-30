@@ -1,5 +1,5 @@
 # Odin project Chess
-
+![chess_game](https://i.imgur.com/gtbEoCk.gif)
 ## Description
 A terminal based Chessgame made for the last project for basic ruby course from Odin-project.
 
