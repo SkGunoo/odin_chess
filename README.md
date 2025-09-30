@@ -26,3 +26,12 @@ MIT License - see LICENSE file
 
 ## Author
 Created by SkGunoo
+
+## Todo
+1. Some methods need to be refactored
+2. AI current don't use En passant and castling rule
+
+## Looking back
+1. By the time I want to do TDD, codes were too complex and I didn't know where to start
+2. Plan things better, I didn't look at what the special rules(castling, en passant) do to until I needed to implement them, Known them earlier probably resulted better and more reusable codes.
+  
