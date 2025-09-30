@@ -34,4 +34,4 @@ Created by SkGunoo
 ## Looking back
 1. By the time I want to do TDD, codes were too complex and I didn't know where to start
 2. Plan things better, I didn't look at what the special rules(castling, en passant) do to until I needed to implement them, Known them earlier probably resulted better and more reusable codes.
-  
+3. Study more about fundamentals, There were many instances that things could be solved much simpler if I remembered some fundamental concepts of OOP. 
